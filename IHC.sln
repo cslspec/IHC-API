@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35222.181
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ihc.WebApi", "Ihc.WebApi\Ihc.WebApi.csproj", "{5213FA26-B74B-4732-88F4-F74281B11964}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ihc.Project", "Ihc.Project\Ihc.Project.csproj", "{CBF94414-5FEC-4870-956C-392A119021E5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ihc.Soap", "Ihc.Soap\Ihc.Soap.csproj", "{CDB4AC3E-C790-42FA-A531-7A7B3E9712BD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5213FA26-B74B-4732-88F4-F74281B11964}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5213FA26-B74B-4732-88F4-F74281B11964}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5213FA26-B74B-4732-88F4-F74281B11964}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5213FA26-B74B-4732-88F4-F74281B11964}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBF94414-5FEC-4870-956C-392A119021E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBF94414-5FEC-4870-956C-392A119021E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBF94414-5FEC-4870-956C-392A119021E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBF94414-5FEC-4870-956C-392A119021E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDB4AC3E-C790-42FA-A531-7A7B3E9712BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDB4AC3E-C790-42FA-A531-7A7B3E9712BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDB4AC3E-C790-42FA-A531-7A7B3E9712BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDB4AC3E-C790-42FA-A531-7A7B3E9712BD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2B65CF50-4037-40DF-9A01-C90A0B300C0B}
+	EndGlobalSection
+EndGlobal
