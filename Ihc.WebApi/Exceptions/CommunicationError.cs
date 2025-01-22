@@ -6,49 +6,43 @@
 public record CommunicationError(int Code, string Title, string Description);
 
 /// <summary>
-/// Standard IHC/HTTP/Communication error.
+/// Collection of standard IHC/HTTP/Communication errors.
 /// </summary>
 public static class CommunicationErrors
 {
     /// <summary>
-    /// Login failed due to connection restructions error.
+    /// Error occurred during XML serialization.
+    /// </summary>
+    public static readonly CommunicationError XmlSerializeError =
+        new(1002, "XML serialize error", "An error occurred during XML serialization.");
+
+    /// <summary>
+    /// Error occurred during XML deserialization.
+    /// </summary>
+    public static readonly CommunicationError XmlDeserializeError =
+        new(1003, "XML deserialize error", "An error occurred during XML deserialization.");
+
+    /// <summary>
+    /// Login failed due to connection restrictions.
     /// </summary>
     public static readonly CommunicationError ConnectionRestriction =
-        new(1006, "Connection restriction", "Login failed due to connection restructions error.");
+        new(1006, "Connection restriction", "Login failed due to connection restrictions.");
 
     /// <summary>
-    /// Login failed due to insufficient user rights error.
+    /// Login failed due to insufficient user rights.
     /// </summary>
-    public static readonly CommunicationError UserRights = 
-        new(1007, "User rights", "Login failed due to insufficient user rights error.");
+    public static readonly CommunicationError UserRights =
+        new(1007, "User rights", "Login failed due to insufficient user rights.");
 
     /// <summary>
-    /// Login failed due to account invalid error.
+    /// Login failed due to an invalid account.
     /// </summary>
     public static readonly CommunicationError AccountInvalid =
-        new(1008, "Account invalid", "Login failed due to account invalid error.");
+        new(1008, "Account invalid", "Login failed due to an invalid account.");
 
     /// <summary>
-    /// Unknown login error.
+    /// An unknown error occurred during login.
     /// </summary>
     public static readonly CommunicationError UnknownError =
-        new(1009, "Unknown error", "Unknown login error.");
-
-    public const int XML_FORMAT_ERROR = 1000;
-
-    public const int XML_LOOKUP_ERROR = 1001;
-
-    public const int XML_SERIALIZE_ERROR = 1002;
-
-    public const int XML_DESERIALIZE_ERROR = 1003;
-
-    public const int HTTP_CLIENT_SIDE_INTERNAL_ERROR = 1004;
-
-    public const int HTTP_UNEXPECTED_CONTENT_ERROR = 1005;
-
-
-
-    public const int FEATURE_NOT_IMPLEMENTED = 1010;
-
-    public const int WEB_EXCEPTION_ERROR_BASE = 10000;
+        new(1009, "Unknown error", "An unknown error occurred during login.");
 }

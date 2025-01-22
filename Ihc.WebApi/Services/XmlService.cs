@@ -64,7 +64,8 @@ namespace Ihc.WebApi.Services
             }
             catch (Exception ex)
             {
-                throw new ErrorWithCodeException(CommunicationErrors.XML_SERIALIZE_ERROR, ex.Message, ex);
+                const string message = "An error occurred during XML serialization.";
+                throw new SoapException(message, CommunicationErrors.XmlSerializeError, ex);
             }
         }
 
@@ -90,7 +91,8 @@ namespace Ihc.WebApi.Services
             }
             catch (System.Exception ex)
             {
-                throw new ErrorWithCodeException(CommunicationErrors.XML_DESERIALIZE_ERROR, ex.Message, ex);
+                const string message = "An error occurred during XML deserialization.";
+                throw new SoapException(message, CommunicationErrors.XmlDeserializeError, ex);
             }
         }
     }
