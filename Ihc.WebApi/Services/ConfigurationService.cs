@@ -216,7 +216,7 @@ namespace Ihc.WebApi.Services
             }
             catch (Exception ex)
             {
-                var problemDetails = new ProblemDetails
+                return new ProblemDetails
                 {
                     Title = "Request partially successful",
                     Detail = "Some items could not be processed.",

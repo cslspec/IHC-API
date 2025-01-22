@@ -62,9 +62,9 @@ namespace Ihc.WebApi.Services
                 var result = Encoding.UTF8.GetString(stream.ToArray());
                 return result;
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
-                throw new ErrorWithCodeException(Errors.XML_SERIALIZE_ERROR, ex.Message, ex);
+                throw new ErrorWithCodeException(CommunicationErrors.XML_SERIALIZE_ERROR, ex.Message, ex);
             }
         }
 
@@ -90,7 +90,7 @@ namespace Ihc.WebApi.Services
             }
             catch (System.Exception ex)
             {
-                throw new ErrorWithCodeException(Errors.XML_DESERIALIZE_ERROR, ex.Message, ex);
+                throw new ErrorWithCodeException(CommunicationErrors.XML_DESERIALIZE_ERROR, ex.Message, ex);
             }
         }
     }

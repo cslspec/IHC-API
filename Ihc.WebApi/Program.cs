@@ -15,6 +15,7 @@ if (config == null)
 
 builder.Services.AddLogging();
 builder.Services.AddProblemDetails();
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddSingleton<IControllerConfiguration>(config);
 
@@ -25,6 +26,7 @@ builder.Services.AddScoped<IAuthCacheService, AuthCacheService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<ITimeService, TimeService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IProblemService, ProblemService>();
 builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<IXmlService, XmlService>();
 builder.Services.AddTransient<IClientService, ClientService>();
