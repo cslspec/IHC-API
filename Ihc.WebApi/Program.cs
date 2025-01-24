@@ -8,6 +8,7 @@ using System.Reflection;
 var builder = WebApplication.CreateBuilder(args);
 
 var config = builder.Configuration.GetSection(ControllerConfiguration.Name).Get<ControllerConfiguration>();
+var enableSwagger = builder.Configuration.GetSection("EnableSwagger").Get<bool>();
 
 // Exit if no configuration is present
 if (config == null)
@@ -33,7 +34,6 @@ builder.Services.AddTransient<IClientService, ClientService>();
 builder.Services.AddTransient<ISoapDateService, SoapDateService>();
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(x =>
  {
@@ -43,7 +43,7 @@ builder.Services.AddSwaggerGen(x =>
          {
              Title = $"{Assembly.GetExecutingAssembly().GetName().Name}",
              Version = "Version 1",
-             Description = "Create documentation for myApp",
+             Description = @"The IHC API simplifies interactions with the IHC controller, streamlining system management and operations."
          });
      var xmlFilename = Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
      x.IncludeXmlComments(xmlFilename);
@@ -56,13 +56,11 @@ builder.Services.AddHttpClient();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (enableSwagger || app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

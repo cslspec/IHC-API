@@ -20,7 +20,7 @@ namespace Ihc.WebApi.Controllers
         /// <returns>An <see cref="Uptime"/> object representing the system's uptime.</returns>
         /// <response code="200">Returns the system uptime.</response>
         /// <response code="500">If there is an error retrieving the uptime.</response>
-        /// <response code="503">If the service is unavailable.</response>
+        /// <response code="503">If there is a problem connecting to the IHC controller.</response>  
         [HttpGet]
         [Route("time/uptime")]
         [ProducesResponseType<Uptime>(StatusCodes.Status200OK)]
@@ -46,7 +46,7 @@ namespace Ihc.WebApi.Controllers
         /// <returns>The current local time as a <see cref="DateTime"/>.</returns>
         /// <response code="200">Returns the current local time.</response>
         /// <response code="500">If there is an error retrieving the local time.</response>
-        /// <response code="503">If the service is unavailable.</response>
+        /// <response code="503">If there is a problem connecting to the IHC controller.</response>  
         [HttpGet]
         [Route("time/localtime")]
         [ProducesResponseType<DateTime>(StatusCodes.Status200OK)]
@@ -72,7 +72,7 @@ namespace Ihc.WebApi.Controllers
         /// <returns>A <see cref="TimeSettings"/> object representing the current configuration.</returns>
         /// <response code="200">Returns the current time settings.</response>
         /// <response code="500">If there is an error retrieving the time settings.</response>
-        /// <response code="503">If the service is unavailable.</response>
+        /// <response code="503">If there is a problem connecting to the IHC controller.</response>  
         [HttpGet]
         [Route("time/settings")]
         [ProducesResponseType<TimeSettings>(StatusCodes.Status200OK)]
@@ -98,7 +98,7 @@ namespace Ihc.WebApi.Controllers
         /// <returns>A <see cref="TimeServerConnectionResult"/> object containing connection details and time.</returns>
         /// <response code="200">Returns the server time and connection details.</response>
         /// <response code="500">If there is an error retrieving the server time.</response>
-        /// <response code="503">If the service is unavailable.</response>
+        /// <response code="503">If there is a problem connecting to the IHC controller.</response>  
         [HttpGet]
         [Route("time/settings/test")]
         [ProducesResponseType<TimeServerConnectionResult>(StatusCodes.Status200OK)]

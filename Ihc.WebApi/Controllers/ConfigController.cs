@@ -43,7 +43,7 @@ namespace Ihc.WebApi.Controllers
         /// <returns>An <see cref="IActionResult"/> containing the system information or an error response.</returns>  
         /// <response code="200">Returns the system information.</response>  
         /// <response code="500">If there is an error retrieving the system information.</response>  
-        /// <response code="503">If there is an error contacting the IHC controller.</response>  
+        /// <response code="503">If there is a problem connecting to the IHC controller.</response>  
         [HttpGet]
         [Route("config/system")]
         [ProducesResponseType<SystemInfo>(StatusCodes.Status200OK)]
@@ -57,7 +57,7 @@ namespace Ihc.WebApi.Controllers
         /// <returns>An <see cref="IActionResult"/> containing the network settings or an error response.</returns>  
         /// <response code="200">Returns the network settings.</response>  
         /// <response code="500">If there is an error retrieving the network settings.</response>  
-        /// <response code="503">If there is an error contacting the IHC controller.</response>  
+        /// <response code="503">If there is a problem connecting to the IHC controller.</response>  
         [HttpGet]
         [Route("config/network")]
         [ProducesResponseType<NetworkSetting>(StatusCodes.Status200OK)]
@@ -71,7 +71,7 @@ namespace Ihc.WebApi.Controllers
         /// <returns>An <see cref="IActionResult"/> containing the DNS servers or an error response.</returns>  
         /// <response code="200">Returns the DNS servers.</response>  
         /// <response code="500">If there is an error retrieving the DNS servers.</response>  
-        /// <response code="503">If there is an error contacting the IHC controller.</response>  
+        /// <response code="503">If there is a problem connecting to the IHC controller.</response>  
         [HttpGet]
         [Route("config/dns")]
         [ProducesResponseType<string[]>(StatusCodes.Status200OK)]
@@ -85,7 +85,7 @@ namespace Ihc.WebApi.Controllers
         /// <returns>An <see cref="IActionResult"/> containing the SMTP settings or an error response.</returns>  
         /// <response code="200">Returns the SMTP settings.</response>  
         /// <response code="500">If there is an error retrieving the SMTP settings.</response>  
-        /// <response code="503">If there is an error contacting the IHC controller.</response>  
+        /// <response code="503">If there is a problem connecting to the IHC controller.</response>  
         [HttpGet]
         [Route("config/smtp")]
         [ProducesResponseType<SmtpSettings>(StatusCodes.Status200OK)]
@@ -101,7 +101,7 @@ namespace Ihc.WebApi.Controllers
         /// <response code="200">If the SMTP settings were updated successfully.</response>  
         /// <response code="400">If the provided SMTP settings are invalid.</response>  
         /// <response code="500">If there is an error updating the SMTP settings.</response>  
-        /// <response code="503">If there is an error contacting the IHC controller.</response>  
+        /// <response code="503">If there is a problem connecting to the IHC controller.</response>  
         [HttpPost]
         [Route("config/smtp")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -136,7 +136,7 @@ namespace Ihc.WebApi.Controllers
         /// <returns>An <see cref="IActionResult"/> containing the email settings or an error response.</returns>  
         /// <response code="200">Returns the email settings.</response>  
         /// <response code="500">If there is an error retrieving the email settings.</response>  
-        /// <response code="503">If there is an error contacting the IHC controller.</response>  
+        /// <response code="503">If there is a problem connecting to the IHC controller.</response>  
         [HttpGet]
         [Route("config/email")]
         [ProducesResponseType<EmailSettings>(StatusCodes.Status200OK)]
@@ -150,7 +150,7 @@ namespace Ihc.WebApi.Controllers
         /// <returns>An <see cref="IActionResult"/> containing the email enable settings or an error response.</returns>  
         /// <response code="200">Returns the email enable settings.</response>  
         /// <response code="500">If there is an error retrieving the email enable settings.</response>  
-        /// <response code="503">If there is an error contacting the IHC controller.</response>  
+        /// <response code="503">If there is a problem connecting to the IHC controller.</response>  
         [HttpGet]
         [Route("config/email/enable")]
         [ProducesResponseType<bool>(StatusCodes.Status200OK)]
@@ -164,7 +164,7 @@ namespace Ihc.WebApi.Controllers
         /// <returns>An <see cref="IActionResult"/> containing the access control settings or an error response.</returns>  
         /// <response code="200">Returns the access control settings.</response>  
         /// <response code="500">If there is an error retrieving the access control settings.</response>  
-        /// <response code="503">If there is an error contacting the IHC controller.</response>  
+        /// <response code="503">If there is a problem connecting to the IHC controller.</response>  
         [HttpGet]
         [Route("config/access")]
         [ProducesResponseType<AccessControlSetting[]>(StatusCodes.Status200OK)]
@@ -177,8 +177,8 @@ namespace Ihc.WebApi.Controllers
         /// </summary>  
         /// <returns>An <see cref="IActionResult"/> indicating the result of the logout operation or an error response.</returns>  
         /// <response code="200">If the logout was successful.</response>  
-        /// <response code="500">If there is an error during the logout process.</response>  
-        /// <response code="503">If there is an error contacting the IHC controller.</response>  
+        /// <response code="500">If there is an error during the logout process.</response>
+        /// <response code="503">If there is a problem connecting to the IHC controller.</response>  
         [HttpGet]
         [Route("config/logout")]
         [ProducesResponseType(StatusCodes.Status200OK)]
