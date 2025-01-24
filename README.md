@@ -1,8 +1,7 @@
-IHC API
-=======
+# IHC API
 
-
-This project consists of multiple components that interact with each other to provide a comprehensive API for managing IHC projects. The main components are:
+This project consists of multiple components that interact with each other to provide a comprehensive API for managing IHC projects.
+The main components are:
 
 - **Ihc.Project**: Contains the core models and logic for handling IHC projects.
 - **Ihc.Soap**: Implements SOAP-based services for various operations related to IHC projects, including authentication, configuration, and project management.
@@ -28,3 +27,16 @@ This project consists of multiple components that interact with each other to pr
 - **SOAP Services**: Provides SOAP-based services for operations like project segmentation, subscription management, and more.
 - **RESTful API**: Exposes endpoints for project information, file retrieval, and other operations.
 - **Core Models**: Defines the core models and logic for handling IHC projects.
+
+# Docker
+
+## Build Docker image
+
+Build Docker image:
+> sudo docker build -t local/ihc-api -f Dockerfile .
+
+Test the image:
+> sudo docker run -it -p 8080:8080 --rm local/ihc-api
+
+Open in a browser:
+http://localhost:8080/swagger/index.html
