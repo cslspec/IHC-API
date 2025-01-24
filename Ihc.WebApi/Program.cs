@@ -41,12 +41,13 @@ builder.Services.AddSwaggerGen(x =>
          "v1",
          new OpenApiInfo
          {
-             Title = $"{Assembly.GetExecutingAssembly().GetName().Name}",
+             Title = "IHC API",
              Version = "Version 1",
              Description = @"The IHC API simplifies interactions with the IHC controller, streamlining system management and operations."
          });
      var xmlFilename = Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
      x.IncludeXmlComments(xmlFilename);
+     x.SupportNonNullableReferenceTypes();
  });
 
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
