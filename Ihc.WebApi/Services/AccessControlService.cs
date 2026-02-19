@@ -10,8 +10,8 @@ namespace Ihc.WebApi.Services
     }
 
     public class AccessControlService(
-        IClientService client,
-        IAuthCacheService authCache
+            IClientService client,
+            IAuthCacheService authCache
         ) : IAccessControlService
     {
 

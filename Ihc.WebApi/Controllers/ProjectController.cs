@@ -10,8 +10,8 @@ namespace Ihc.WebApi.Controllers
     [ApiController]
     [Route("api")]
     public class ProjectController(
-        IProjectService projectService,
-       IProblemService problemService
+            IProjectService projectService,
+            IProblemService problemService
         ) : ControllerBase
     {
         /// <summary>

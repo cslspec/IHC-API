@@ -274,7 +274,7 @@ public class ConfigurationService(
                 hostport = settings.ServerPortNumber ?? 25,
                 username = settings.UserName,
                 password = settings.Password
-            }            
+            }
         };
 
         try

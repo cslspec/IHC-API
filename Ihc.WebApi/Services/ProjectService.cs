@@ -28,7 +28,7 @@ namespace Ihc.WebApi.Services
                 ServiceName, "isIHCProjectAvailable", token!, new inputMessageName4());
 
             var result = response?.isIHCProjectAvailable1 ?? false;
-            return result; 
+            return result;
         }
 
         public async Task<ProjectInfo> GetProjectInfo()

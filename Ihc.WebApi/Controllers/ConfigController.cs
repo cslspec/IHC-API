@@ -184,11 +184,11 @@ namespace Ihc.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType<ProblemDetails>(StatusCodes.Status503ServiceUnavailable)]
-        public async Task<IActionResult> Logout()
+        public IActionResult Logout()
         {
             try
             {
-                await Task.Run(authCacheService.ClearCache);
+                authCacheService.ClearCache();
                 return Ok();
             }
             catch (Exception e)

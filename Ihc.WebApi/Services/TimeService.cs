@@ -153,7 +153,7 @@ namespace Ihc.WebApi.Services
                 setSettings1 = new WSTimeManagerSettings()
             };
 
-            if (settings.TimeServerName !=  null)
+            if (settings.TimeServerName != null)
             {
                 input.setSettings1.serverName = settings.TimeServerName;
             }
@@ -187,7 +187,7 @@ namespace Ihc.WebApi.Services
                     day = settings.CurrentTime.Value.Day,
                     hours = settings.CurrentTime.Value.Hour,
                     minutes = settings.CurrentTime.Value.Minute,
-                    seconds = settings.CurrentTime.Value.Second                    
+                    seconds = settings.CurrentTime.Value.Second
                 };
             }
 

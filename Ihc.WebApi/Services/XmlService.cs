@@ -1,7 +1,7 @@
 ﻿using Ihc.WebApi.Exceptions;
 using System.Text;
-using System.Xml.Serialization;
 using System.Xml;
+using System.Xml.Serialization;
 
 namespace Ihc.WebApi.Services
 {
