@@ -2,13 +2,13 @@ using Ihc.WebApi.Exceptions;
 using Ihc.WebApi.Model;
 using Ihc.WebApi.Services;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
+using Scalar.AspNetCore;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var config = builder.Configuration.GetSection(ControllerConfiguration.Name).Get<ControllerConfiguration>();
-var enableSwagger = builder.Configuration.GetSection("EnableSwagger").Get<bool>();
 
 // Exit if no configuration is present
 if (config == null)
@@ -56,14 +56,10 @@ builder.Services.AddHttpClient();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (enableSwagger || app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseAuthorization();
+app.UseSwagger();
+app.UseSwaggerUI();
+app.MapSwagger("/openapi/{documentName}.json");
+app.MapScalarApiReference();
 
 app.MapControllers();
 
