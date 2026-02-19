@@ -11,10 +11,10 @@ namespace Ihc.WebApi.Controllers
     [ApiController]
     [Route("api")]
     public class ConfigController(
-       IConfigurationService configService,
-       IAccessControlService accessService,
-       IAuthCacheService authCacheService,
-       IProblemService problemService
+           IConfigurationService configService,
+           IAccessControlService accessService,
+           IAuthCacheService authCacheService,
+           IProblemService problemService
        ) : ControllerBase
     {
         /// <summary>  
@@ -33,7 +33,7 @@ namespace Ihc.WebApi.Controllers
             catch (Exception e)
             {
                 var problem = problemService.GetProblemDetails(e);
-                return StatusCode(problem.Status ?? 418, problem);
+                return StatusCode(problem.Status ?? 500, problem);
             }
         }
 
@@ -126,7 +126,7 @@ namespace Ihc.WebApi.Controllers
             catch (Exception e)
             {
                 var problem = problemService.GetProblemDetails(e);
-                return StatusCode(problem.Status ?? 418, problem);
+                return StatusCode(problem.Status ?? 500, problem);
             }
         }
 
@@ -194,7 +194,7 @@ namespace Ihc.WebApi.Controllers
             catch (Exception e)
             {
                 var problem = problemService.GetProblemDetails(e);
-                return StatusCode(problem.Status ?? 418, problem);
+                return StatusCode(problem.Status ?? 500, problem);
             }
         }
     }

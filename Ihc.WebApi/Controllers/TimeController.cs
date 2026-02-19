@@ -36,7 +36,7 @@ namespace Ihc.WebApi.Controllers
             catch (Exception e)
             {
                 var problem = problemService.GetProblemDetails(e);
-                return StatusCode(problem.Status ?? 418, problem);
+                return StatusCode(problem.Status ?? 500, problem);
             }
         }
 
@@ -62,7 +62,7 @@ namespace Ihc.WebApi.Controllers
             catch (Exception e)
             {
                 var problem = problemService.GetProblemDetails(e);
-                return StatusCode(problem.Status ?? 418, problem);
+                return StatusCode(problem.Status ?? 500, problem);
             }
         }
 
@@ -88,7 +88,7 @@ namespace Ihc.WebApi.Controllers
             catch (Exception e)
             {
                 var problem = problemService.GetProblemDetails(e);
-                return StatusCode(problem.Status ?? 418, problem);
+                return StatusCode(problem.Status ?? 500, problem);
             }
         }
 
@@ -114,7 +114,7 @@ namespace Ihc.WebApi.Controllers
             catch (Exception e)
             {
                 var problem = problemService.GetProblemDetails(e);
-                return StatusCode(problem.Status ?? 418, problem);
+                return StatusCode(problem.Status ?? 500, problem);
             }
         }
     }
