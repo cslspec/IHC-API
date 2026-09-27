@@ -5,8 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 namespace Ihc.WebApi.Controllers
 {
     /// <summary>
-    /// Manage user-related operations via the IHC UserManagerService API.
+    /// Provides endpoints for user-related operations via the IHC UserManagerService API.
     /// </summary>
+    /// <param name="userService">Service for retrieving users from the controller.</param>
+    /// <param name="problemService">Service for creating API problem details.</param>
     [ApiController]
     [Route("api")]
     public class UserController(

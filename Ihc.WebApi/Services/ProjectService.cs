@@ -4,15 +4,38 @@ using Ihc.WebApi.Model;
 
 namespace Ihc.WebApi.Services
 {
+    /// <summary>
+    /// Retrieves project availability, metadata, and project data from the IHC controller.
+    /// </summary>
     public interface IProjectService
     {
+        /// <summary>
+        /// Determines whether an IHC project is available on the controller.
+        /// </summary>
+        /// <returns><see langword="true"/> if a project is available; otherwise, <see langword="false"/>.</returns>
         Task<bool> GetIsProjectAvailable();
 
+        /// <summary>
+        /// Retrieves metadata for the current IHC project.
+        /// </summary>
+        /// <returns>The current project's metadata.</returns>
+        /// <exception cref="EmptyResponseException">The controller returns no project information.</exception>
         Task<ProjectInfo> GetProjectInfo();
 
+        /// <summary>
+        /// Retrieves and decompresses the current IHC project file.
+        /// </summary>
+        /// <returns>The project file contents as text.</returns>
+        /// <exception cref="EmptyResponseException">The controller returns no project data.</exception>
         Task<string> GetProjectFile();
     }
 
+    /// <summary>
+    /// Implements project queries against the IHC controller.
+    /// </summary>
+    /// <param name="client">The SOAP client used to communicate with the controller.</param>
+    /// <param name="authCache">Service for obtaining the current authentication token.</param>
+    /// <param name="dateService">Service for converting SOAP dates.</param>
     public class ProjectService(
         IClientService client,
         IAuthCacheService authCache,
@@ -21,6 +44,7 @@ namespace Ihc.WebApi.Services
     {
         private const string ServiceName = "ControllerService";
 
+        /// <inheritdoc />
         public async Task<bool> GetIsProjectAvailable()
         {
             var token = authCache.GetAuthToken().Token;
@@ -31,6 +55,7 @@ namespace Ihc.WebApi.Services
             return result;
         }
 
+        /// <inheritdoc />
         public async Task<ProjectInfo> GetProjectInfo()
         {
             var token = authCache.GetAuthToken().Token;
@@ -56,6 +81,7 @@ namespace Ihc.WebApi.Services
             return result;
         }
 
+        /// <inheritdoc />
         public async Task<string> GetProjectFile()
         {
             var token = authCache.GetAuthToken().Token;

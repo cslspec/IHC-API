@@ -5,8 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 namespace Ihc.WebApi.Controllers
 {
     /// <summary>
-    /// Manage project-related operations via the IHC ControllerService API.
+    /// Provides endpoints for project-related operations via the IHC ControllerService API.
     /// </summary>
+    /// <param name="projectService">Service for retrieving project data from the controller.</param>
+    /// <param name="problemService">Service for creating API problem details.</param>
     [ApiController]
     [Route("api")]
     public class ProjectController(
@@ -18,8 +20,8 @@ namespace Ihc.WebApi.Controllers
         /// Retrieves the project availability from the IHC controller.
         /// </summary>
         /// <returns>An <see cref="IActionResult"/> containing the project availability or an error response.</returns>  
-        /// <response code="200">Returns the system information.</response>  
-        /// <response code="500">If there is an error retrieving the system information.</response>  
+        /// <response code="200">Returns whether a project is available.</response>  
+        /// <response code="500">If there is an error retrieving project availability.</response>  
         /// <response code="503">If there is a problem connecting to the IHC controller.</response>  
         [HttpGet]
         [Route("project/available")]

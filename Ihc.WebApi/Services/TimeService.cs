@@ -4,16 +4,34 @@ using Ihc.WebApi.Model;
 
 namespace Ihc.WebApi.Services
 {
+    /// <summary>
+    /// Retrieves and updates time settings on the IHC controller.
+    /// </summary>
     public interface ITimeService
     {
+        /// <summary>Retrieves the controller's uptime.</summary>
+        /// <returns>The uptime broken down into time components.</returns>
         Task<Uptime> GetUptime();
 
+        /// <summary>Retrieves the controller's current local time.</summary>
+        /// <returns>The current local date and time.</returns>
+        /// <exception cref="EmptyResponseException">The controller returns no time value.</exception>
         Task<DateTime> GetLocalTime();
 
+        /// <summary>Retrieves the configured time settings.</summary>
+        /// <returns>The current time settings.</returns>
+        /// <exception cref="EmptyResponseException">The controller returns no settings.</exception>
         Task<TimeSettings> GetSettings();
 
+        /// <summary>Queries the configured time server for its current time.</summary>
+        /// <returns>The connection result and, when successful, the server time.</returns>
+        /// <exception cref="EmptyResponseException">The controller returns no connection result.</exception>
         Task<TimeServerConnectionResult> GetTimeFromServer();
 
+        /// <summary>Updates the controller's time settings.</summary>
+        /// <param name="settings">The settings to apply.</param>
+        /// <returns>The controller's update result.</returns>
+        /// <exception cref="EmptyResponseException">The controller returns no update result.</exception>
         Task<bool?> UpdateSettings(TimeSettings settings);
     }
 
@@ -21,6 +39,9 @@ namespace Ihc.WebApi.Services
     /// Provides functionality to interact with the TimeManagerService, handling operations 
     /// such as fetching uptime, current time, and managing time settings.
     /// </summary>
+    /// <param name="client">The SOAP client used to communicate with the controller.</param>
+    /// <param name="dateService">Service for converting SOAP dates.</param>
+    /// <param name="authCache">Service for obtaining the current authentication token.</param>
     public class TimeService(
         IClientService client,
         ISoapDateService dateService,

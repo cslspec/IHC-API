@@ -8,6 +8,10 @@ namespace Ihc.WebApi.Controllers
     /// Controller for handling configuration requests to the IHC controller.  
     /// Provides endpoints for retrieving and updating various configuration settings.  
     /// </summary>  
+    /// <param name="configService">Service for retrieving and updating controller configuration.</param>
+    /// <param name="accessService">Service for retrieving access control settings.</param>
+    /// <param name="authCacheService">Service for managing the authenticated controller session.</param>
+    /// <param name="problemService">Service for creating API problem details.</param>
     [ApiController]
     [Route("api")]
     public class ConfigController(
@@ -99,7 +103,7 @@ namespace Ihc.WebApi.Controllers
         /// <param name="settings">The new SMTP settings to apply.</param>  
         /// <returns>An <see cref="IActionResult"/> indicating the result of the update operation or an error response.</returns>  
         /// <response code="200">If the SMTP settings were updated successfully.</response>  
-        /// <response code="400">If the provided SMTP settings are invalid.</response>  
+        /// <response code="400">If the SMTP settings could not be applied.</response>  
         /// <response code="500">If there is an error updating the SMTP settings.</response>  
         /// <response code="503">If there is a problem connecting to the IHC controller.</response>  
         [HttpPost]

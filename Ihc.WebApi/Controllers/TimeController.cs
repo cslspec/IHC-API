@@ -5,8 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 namespace Ihc.WebApi.Controllers
 {
     /// <summary>
-    /// Manage time-related operations via the IHC TimeManagerService API.
+    /// Provides endpoints for time-related operations via the IHC TimeManagerService API.
     /// </summary>
+    /// <param name="timeService">Service for retrieving and updating controller time data.</param>
+    /// <param name="problemService">Service for creating API problem details.</param>
     [ApiController]
     [Route("api")]
     public class TimeController(
@@ -93,7 +95,7 @@ namespace Ihc.WebApi.Controllers
         }
 
         /// <summary>
-        /// Retrieves the current time on the IHC system directly from the time configured server.
+        /// Retrieves the current time from the configured time server through the IHC controller.
         /// </summary>
         /// <returns>A <see cref="TimeServerConnectionResult"/> object containing connection details and time.</returns>
         /// <response code="200">Returns the server time and connection details.</response>

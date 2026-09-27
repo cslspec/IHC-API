@@ -16,50 +16,53 @@ public interface IConfigurationService
     /// <summary>
     /// Gets the system information from the LK IHC controller.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The controller's system information.</returns>
     Task<SystemInfo> GetSystemInfo();
 
     /// <summary>
     /// Gets the network settings from the LK IHC controller.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The controller's network settings.</returns>
     Task<NetworkSetting> GetNetworkSetting();
 
     /// <summary>
     /// Gets the DNS servers from the LK IHC controller.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The configured DNS server addresses.</returns>
     Task<string[]> GetDnsServers();
 
     /// <summary>
     /// Gets the SMTP settings from the LK IHC controller.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The configured SMTP settings.</returns>
     Task<SmtpSettings> GetSmtpSettings();
 
     /// <summary>
     /// Gets the email settings from the LK IHC controller.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The configured email settings.</returns>
     Task<EmailSettings> GetEmailSettings();
 
     /// <summary>
     /// Gets the email enable settings from the LK IHC controller.
     /// </summary>
-    /// <returns></returns>
+    /// <returns><see langword="true"/> when email control is enabled; otherwise, <see langword="false"/>.</returns>
     Task<bool> GetEmailEnableSettings();
 
     /// <summary>
     /// Updates the SMTP settings on the LK IHC controller.
     /// </summary>
-    /// <param name="settings"></param>
-    /// <returns></returns>
+    /// <param name="settings">The SMTP settings to apply.</param>
+    /// <returns><see langword="null"/> when the update request completes.</returns>
+    /// <exception cref="HttpRequestException">The controller cannot be reached.</exception>
     Task<ProblemDetails?> UpdateSmtpSettings(SmtpSettings settings);
 }
 
 /// <summary>
 /// Service for handling configuration settings on the LK IHC controller.
 /// </summary>
+/// <param name="client">The SOAP client used to communicate with the controller.</param>
+/// <param name="authCache">Service for obtaining the current authentication token.</param>
 public class ConfigurationService(
     IClientService client,
     IAuthCacheService authCache
@@ -71,8 +74,8 @@ public class ConfigurationService(
     /// <summary>
     /// Gets the DNS servers from the LK IHC controller.
     /// </summary>
-    /// <returns></returns>
-    /// <exception cref="EmptyResponseException"></exception>
+    /// <returns>The configured DNS server addresses.</returns>
+    /// <exception cref="EmptyResponseException">The controller returns no DNS server data.</exception>
     public async Task<string[]> GetDnsServers()
     {
         var token = authCache.GetAuthToken().Token;
@@ -118,8 +121,8 @@ public class ConfigurationService(
     /// <summary>
     /// Gets the SMTP settings from the LK IHC controller.
     /// </summary>
-    /// <returns></returns>
-    /// <exception cref="EmptyResponseException"></exception>
+    /// <returns>The configured SMTP settings.</returns>
+    /// <exception cref="EmptyResponseException">The controller returns no SMTP settings.</exception>
     public async Task<SmtpSettings> GetSmtpSettings()
     {
         var token = authCache.GetAuthToken().Token;
@@ -144,8 +147,8 @@ public class ConfigurationService(
     /// <summary>
     /// Gets the email settings from the LK IHC controller.
     /// </summary>
-    /// <returns></returns>
-    /// <exception cref="EmptyResponseException"></exception>
+    /// <returns>The configured email settings.</returns>
+    /// <exception cref="EmptyResponseException">The controller returns no email settings.</exception>
     public async Task<EmailSettings> GetEmailSettings()
     {
         var token = authCache.GetAuthToken().Token;
@@ -173,8 +176,8 @@ public class ConfigurationService(
     /// <summary>
     /// Gets the email enable settings from the LK IHC controller.
     /// </summary>
-    /// <returns></returns>
-    /// <exception cref="EmptyResponseException"></exception>
+    /// <returns><see langword="true"/> when email control is enabled; otherwise, <see langword="false"/>.</returns>
+    /// <exception cref="EmptyResponseException">The controller returns no email enable setting.</exception>
     public async Task<bool> GetEmailEnableSettings()
     {
         var token = authCache.GetAuthToken().Token;
@@ -190,8 +193,8 @@ public class ConfigurationService(
     /// <summary>
     /// Gets the network settings from the LK IHC controller.
     /// </summary>
-    /// <returns></returns>
-    /// <exception cref="EmptyResponseException"></exception>
+    /// <returns>The controller's network settings.</returns>
+    /// <exception cref="EmptyResponseException">The controller returns no network settings.</exception>
     public async Task<NetworkSetting> GetNetworkSetting()
     {
         var token = authCache.GetAuthToken().Token;
@@ -217,8 +220,8 @@ public class ConfigurationService(
     /// <summary>
     /// Gets the system information from the LK IHC controller.
     /// </summary>
-    /// <returns></returns>
-    /// <exception cref="EmptyResponseException"></exception>
+    /// <returns>The controller's system information.</returns>
+    /// <exception cref="EmptyResponseException">The controller returns no system information.</exception>
     public async Task<SystemInfo> GetSystemInfo()
     {
         var token = authCache.GetAuthToken().Token;
@@ -261,8 +264,9 @@ public class ConfigurationService(
     /// <summary>
     /// Updates the SMTP settings on the LK IHC controller.
     /// </summary>
-    /// <param name="settings"></param>
-    /// <returns></returns>
+    /// <param name="settings">The SMTP settings to apply.</param>
+    /// <returns><see langword="null"/> when the update request completes.</returns>
+    /// <exception cref="HttpRequestException">The controller cannot be reached.</exception>
     public async Task<ProblemDetails?> UpdateSmtpSettings(SmtpSettings settings)
     {
         var token = authCache.GetAuthToken().Token;
@@ -277,19 +281,8 @@ public class ConfigurationService(
             }
         };
 
-        try
-        {
-            await client.Post<inputMessageName4, outputMessageName4>(
-                ServiceName, "setSMTPSettings", token!, input);
-        }
-        catch
-        {
-            return new ProblemDetails
-            {
-                Title = "Request partially successful",
-                Detail = "Some items could not be processed.",
-            };
-        }
+        await client.Post<inputMessageName4, outputMessageName4>(
+            ServiceName, "setSMTPSettings", token!, input);
 
         return null;
     }

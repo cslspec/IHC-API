@@ -3,22 +3,23 @@
 namespace Ihc.WebApi.Model.Envelope;
 
 /// <summary>
-/// This class represents a complete SOAP request for a specific request message (which unlike this class is is auto-generated).
-/// Use dotnet XmlSerializer to generate the corresponding xml
-/// NOTE: Remember to configure the serializer to use utcs namespace for the T data part.
+/// Represents a SOAP request envelope containing a typed request body.
 /// </summary>
-/// <typeparam name="T"></typeparam>
+/// <typeparam name="T">The type of the SOAP request body.</typeparam>
 [XmlRoot(ElementName = "Envelope", Namespace = "http://schemas.xmlsoap.org/soap/envelope/", IsNullable = false)]
 public class RequestEnvelope<T>
 {
+    /// <summary>Gets or sets the SOAP header content.</summary>
     [XmlElement(Order = 1, IsNullable = false)]
     public string Header { get; set; }
 
+    /// <summary>Gets or sets the typed SOAP request body.</summary>
     [XmlElement(Order = 2, IsNullable = false)]
     public T Body;
 
     private XmlSerializerNamespaces xmlns;
 
+    /// <summary>Gets or sets the XML namespace declarations used when serializing the envelope.</summary>
     [XmlNamespaceDeclarations]
     public XmlSerializerNamespaces Xmlns
     {
@@ -26,6 +27,8 @@ public class RequestEnvelope<T>
         set { xmlns = value; }
     }
 
+    /// <summary>Initializes a request envelope with the specified body and required SOAP namespaces.</summary>
+    /// <param name="body">The request body to include in the envelope.</param>
     public RequestEnvelope(T body)
         : this()
     {
@@ -33,6 +36,7 @@ public class RequestEnvelope<T>
         Header = string.Empty;
     }
 
+    /// <summary>Initializes an empty request envelope with the required SOAP namespaces.</summary>
     public RequestEnvelope()
     {
         xmlns = new XmlSerializerNamespaces();

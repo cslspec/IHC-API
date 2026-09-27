@@ -3,19 +3,19 @@
 namespace Ihc.WebApi.Model.Envelope;
 
 /// <summary>
-/// This class represents a complete SOAP response for a specific response message (which unlike this class is is auto-generated).
-/// Use dotnet XmlSerializer to generate the corresponding xml.
-/// NOTE: Remember to configure the serializer to use utcs namespace for the T data part.
+/// Represents a SOAP response envelope containing a typed response body.
 /// </summary>
-/// <typeparam name="T"></typeparam>
+/// <typeparam name="T">The type of the SOAP response body.</typeparam>
 [XmlRoot(ElementName = "Envelope", Namespace = "http://schemas.xmlsoap.org/soap/envelope/", IsNullable = false)]
 public class ResponseEnvelope<T>
 {
+    /// <summary>Gets or sets the typed SOAP response body.</summary>
     [XmlElement(Order = 1, IsNullable = false)]
     public T Body;
 
     private XmlSerializerNamespaces xmlns;
 
+    /// <summary>Gets or sets the XML namespace declarations used when serializing the envelope.</summary>
     [XmlNamespaceDeclarations]
     public XmlSerializerNamespaces Xmlns
     {
@@ -23,12 +23,15 @@ public class ResponseEnvelope<T>
         set { xmlns = value; }
     }
 
+    /// <summary>Initializes a response envelope with the specified body and required SOAP namespaces.</summary>
+    /// <param name="body">The response body to include in the envelope.</param>
     public ResponseEnvelope(T body)
         : this()
     {
         Body = body;
     }
 
+    /// <summary>Initializes an empty response envelope with the required SOAP namespaces.</summary>
     public ResponseEnvelope()
     {
         xmlns = new XmlSerializerNamespaces();

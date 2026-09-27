@@ -3,8 +3,19 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Ihc.WebApi.Exceptions
 {
+    /// <summary>
+    /// Converts unhandled exceptions into HTTP problem details responses.
+    /// </summary>
+    /// <param name="problemDetailsService">Service for writing problem details responses.</param>
     public class CustomExceptionHandler(IProblemDetailsService problemDetailsService) : IExceptionHandler
     {
+        /// <summary>
+        /// Handles an unhandled exception by writing a problem details response.
+        /// </summary>
+        /// <param name="httpContext">The current HTTP request context.</param>
+        /// <param name="exception">The exception to handle.</param>
+        /// <param name="cancellationToken">A token that can cancel writing the response.</param>
+        /// <returns><see langword="true"/> if a response was written; otherwise, <see langword="false"/>.</returns>
         public async ValueTask<bool> TryHandleAsync(
             HttpContext httpContext,
             Exception exception,

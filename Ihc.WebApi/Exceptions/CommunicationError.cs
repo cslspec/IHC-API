@@ -1,8 +1,11 @@
 ﻿namespace Ihc.WebApi.Exceptions;
 
 /// <summary>
-/// Standard IHC/HTTP/Communication error.
+/// Describes a standardized IHC communication error.
 /// </summary>
+/// <param name="Code">The numeric error code.</param>
+/// <param name="Title">A short title for the error.</param>
+/// <param name="Description">A detailed description of the error.</param>
 public record CommunicationError(int Code, string Title, string Description);
 
 /// <summary>

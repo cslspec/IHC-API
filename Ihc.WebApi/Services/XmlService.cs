@@ -116,7 +116,6 @@ namespace Ihc.WebApi.Services
         /// <remarks>
         /// The deserialization process:
         /// - Applies the "utcs" namespace to the type and its generic type arguments
-        /// - Interprets the input XML as UTF-8 encoded content
         /// - Attempts to reconstruct the object from the XML structure
         /// </remarks>
         public T? DeserializeXml<T>(string xml) where T : class

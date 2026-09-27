@@ -3,13 +3,28 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace Ihc.WebApi.Services;
 
+/// <summary>
+/// Provides access to the cached IHC authentication token.
+/// </summary>
 public interface IAuthCacheService
 {
+    /// <summary>
+    /// Gets the current authentication token, logging in when no valid token is cached.
+    /// </summary>
+    /// <returns>The cached or newly created authentication token.</returns>
     IAuthToken GetAuthToken();
 
+    /// <summary>
+    /// Logs out the cached session and clears its authentication token.
+    /// </summary>
     void ClearCache();
 }
 
+/// <summary>
+/// Caches the IHC authentication token and manages its session lifecycle.
+/// </summary>
+/// <param name="authService">Service used to log in and out of the controller.</param>
+/// <param name="cache">The memory cache used to store the current token.</param>
 public class AuthCacheService(IAuthService authService, IMemoryCache cache)
     : IAuthCacheService
 {
@@ -21,10 +36,7 @@ public class AuthCacheService(IAuthService authService, IMemoryCache cache)
         AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(60)
     };
 
-    /// <summary>
-    /// Ge
-    /// </summary>
-    /// <returns></returns>
+    /// <inheritdoc />
     public IAuthToken GetAuthToken()
     {
         cache.TryGetValue(CacheKey, out AuthToken? authToken);

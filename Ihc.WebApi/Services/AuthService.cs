@@ -6,22 +6,33 @@ using System.Text;
 
 namespace Ihc.WebApi.Services;
 
+/// <summary>
+/// Authenticates with the IHC controller and manages authenticated sessions.
+/// </summary>
 public interface IAuthService
 {
     /// <summary>
-    /// Login to IHC Controller.
+    /// Logs in to the IHC controller using the configured credentials.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The authenticated user and session token.</returns>
+    /// <exception cref="AuthorizationException">The controller rejects the login or cannot be reached.</exception>
     IhcUser Login();
 
     /// <summary>
-    /// Log out off IHC Controller.
+    /// Logs out the specified session from the IHC controller.
     /// </summary>
-    /// <param name="token"></param>
-    /// <returns></returns>
+    /// <param name="token">The authentication token for the session to end.</param>
+    /// <returns>The controller's logout result, or <see langword="null"/> if no result is returned.</returns>
     bool? Logout(string token);
 }
 
+/// <summary>
+/// Implements authentication and logout requests for the IHC controller.
+/// </summary>
+/// <param name="config">The controller connection and login settings.</param>
+/// <param name="dateService">Service for converting SOAP dates.</param>
+/// <param name="xmlService">Service for serializing and deserializing SOAP messages.</param>
+/// <param name="clientFactory">Factory for creating HTTP clients.</param>
 public class AuthService(
     IControllerConfiguration config,
     ISoapDateService dateService,
@@ -29,6 +40,7 @@ public class AuthService(
     IHttpClientFactory clientFactory)
     : IAuthService
 {
+    /// <inheritdoc />
     public IhcUser Login()
     {
         var authRequest = new inputMessageName2
@@ -54,7 +66,7 @@ public class AuthService(
         string? cookie = null;
         try
         {
-            var response = client.
+            using var response = client.
                 PostAsync(url, content).
                 ConfigureAwait(false).
                 GetAwaiter().
@@ -126,6 +138,7 @@ public class AuthService(
         }
     }
 
+    /// <inheritdoc />
     public bool? Logout(string token)
     {
         var xmlObject = new RequestEnvelope<inputMessageName3>(new inputMessageName3());
@@ -138,7 +151,7 @@ public class AuthService(
         var url = config.Address + "/ws/AuthenticationService";
         var client = clientFactory.CreateClient();
 
-        var response = client.
+        using var response = client.
             PostAsync(url, content).
             ConfigureAwait(false).
             GetAwaiter().

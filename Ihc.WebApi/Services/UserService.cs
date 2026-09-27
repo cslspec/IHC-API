@@ -4,11 +4,26 @@ using Ihc.WebApi.Model;
 
 namespace Ihc.WebApi.Services
 {
+    /// <summary>
+    /// Retrieves user accounts from the IHC controller.
+    /// </summary>
     public interface IUserService
     {
+        /// <summary>
+        /// Retrieves the controller's users, optionally including their passwords.
+        /// </summary>
+        /// <param name="includePassword"><see langword="true"/> to include passwords in the results.</param>
+        /// <returns>The users returned by the controller.</returns>
+        /// <exception cref="EmptyResponseException">The controller returns no user data.</exception>
         Task<IhcUser[]> GetUsers(bool includePassword);
     }
 
+    /// <summary>
+    /// Implements user queries against the IHC controller.
+    /// </summary>
+    /// <param name="client">The SOAP client used to communicate with the controller.</param>
+    /// <param name="dateService">Service for converting SOAP dates.</param>
+    /// <param name="authCache">Service for obtaining the current authentication token.</param>
     public class UserService(
         IClientService client,
         ISoapDateService dateService,
@@ -17,6 +32,7 @@ namespace Ihc.WebApi.Services
     {
         private const string ServiceName = "UserManagerService";
 
+        /// <inheritdoc />
         public async Task<IhcUser[]> GetUsers(bool includePassword)
         {
             var token = authCache.GetAuthToken().Token;
