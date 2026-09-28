@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace Ihc.WebApi.Controllers
 {
     /// <summary>  
-    /// Controller for handling configuration requests to the IHC controller.  
     /// Provides endpoints for retrieving and updating various configuration settings.  
     /// </summary>  
     /// <param name="configService">Service for retrieving and updating controller configuration.</param>
@@ -53,7 +52,10 @@ namespace Ihc.WebApi.Controllers
         [ProducesResponseType<SystemInfo>(StatusCodes.Status200OK)]
         [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType<ProblemDetails>(StatusCodes.Status503ServiceUnavailable)]
-        public Task<IActionResult> GetSystemInfo() => ExecuteServiceCall(configService.GetSystemInfo);
+        public async Task<IActionResult> GetSystemInfo()
+        {
+            return await ExecuteServiceCall(configService.GetSystemInfo);
+        }
 
         /// <summary>  
         /// Gets network settings from the IHC controller.  
@@ -67,7 +69,10 @@ namespace Ihc.WebApi.Controllers
         [ProducesResponseType<NetworkSetting>(StatusCodes.Status200OK)]
         [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType<ProblemDetails>(StatusCodes.Status503ServiceUnavailable)]
-        public Task<IActionResult> GetNetworkSetting() => ExecuteServiceCall(configService.GetNetworkSetting);
+        public async Task<IActionResult> GetNetworkSetting()
+        {
+            return await ExecuteServiceCall(configService.GetNetworkSetting);
+        }
 
         /// <summary>  
         /// Gets DNS servers from the IHC controller.  
@@ -81,7 +86,10 @@ namespace Ihc.WebApi.Controllers
         [ProducesResponseType<string[]>(StatusCodes.Status200OK)]
         [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType<ProblemDetails>(StatusCodes.Status503ServiceUnavailable)]
-        public Task<IActionResult> GetDnsServers() => ExecuteServiceCall(configService.GetDnsServers);
+        public async Task<IActionResult> GetDnsServers()
+        {
+            return await ExecuteServiceCall(configService.GetDnsServers);
+        }
 
         /// <summary>  
         /// Gets SMTP settings from the IHC controller.  
@@ -95,7 +103,10 @@ namespace Ihc.WebApi.Controllers
         [ProducesResponseType<SmtpSettings>(StatusCodes.Status200OK)]
         [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType<ProblemDetails>(StatusCodes.Status503ServiceUnavailable)]
-        public Task<IActionResult> GetSmtpSettings() => ExecuteServiceCall(configService.GetSmtpSettings);
+        public async Task<IActionResult> GetSmtpSettings()
+        {
+            return await ExecuteServiceCall(configService.GetSmtpSettings);
+        }
 
         /// <summary>  
         /// Updates SMTP settings in the IHC controller.  
@@ -146,7 +157,10 @@ namespace Ihc.WebApi.Controllers
         [ProducesResponseType<EmailSettings>(StatusCodes.Status200OK)]
         [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType<ProblemDetails>(StatusCodes.Status503ServiceUnavailable)]
-        public Task<IActionResult> GetEmailSettings() => ExecuteServiceCall(configService.GetEmailSettings);
+        public async Task<IActionResult> GetEmailSettings()
+        {
+            return await ExecuteServiceCall(configService.GetEmailSettings);
+        }
 
         /// <summary>  
         /// Gets email enable settings from the IHC controller.  
@@ -157,10 +171,26 @@ namespace Ihc.WebApi.Controllers
         /// <response code="503">If there is a problem connecting to the IHC controller.</response>  
         [HttpGet]
         [Route("config/email/enable")]
-        [ProducesResponseType<bool>(StatusCodes.Status200OK)]
+        [ProducesResponseType<EmailEnabledSetting>(StatusCodes.Status200OK)]
         [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType<ProblemDetails>(StatusCodes.Status503ServiceUnavailable)]
-        public Task<IActionResult> GetEmailEnableSettings() => ExecuteServiceCall(configService.GetEmailEnableSettings);
+        public async Task<IActionResult> GetEmailEnableSettings()
+        {
+            try
+            {
+                var result = new EmailEnabledSetting
+                {
+                    IsEmailEnabled = await configService.GetEmailEnableSettings()
+                };
+
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                var problem = problemService.GetProblemDetails(e);
+                return StatusCode(problem.Status ?? 500, problem);
+            }
+        }
 
         /// <summary>  
         /// Gets access control settings from the IHC controller.  
@@ -174,7 +204,10 @@ namespace Ihc.WebApi.Controllers
         [ProducesResponseType<AccessControlSetting[]>(StatusCodes.Status200OK)]
         [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType<ProblemDetails>(StatusCodes.Status503ServiceUnavailable)]
-        public Task<IActionResult> GetAccessControl() => ExecuteServiceCall(accessService.GetAccessControl);
+        public async Task<IActionResult> GetAccessControl()
+        {
+            return await ExecuteServiceCall(accessService.GetAccessControl);
+        }
 
         /// <summary>  
         /// Logs out from the IHC controller and purges the authentication cache.  

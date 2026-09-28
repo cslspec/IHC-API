@@ -25,15 +25,16 @@ namespace Ihc.WebApi.Controllers
         /// <response code="503">If there is a problem connecting to the IHC controller.</response>  
         [HttpGet]
         [Route("project/available")]
-        [ProducesResponseType<bool>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ProjectAvailability>(StatusCodes.Status200OK)]
         [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType<ProblemDetails>(StatusCodes.Status503ServiceUnavailable)]
         public async Task<IActionResult> GetIsProjectAvailable()
         {
             try
             {
-                var info = await projectService.GetIsProjectAvailable();
-                return Ok(info);
+                var available = await projectService.GetIsProjectAvailable();
+                var result = new ProjectAvailability { IsProjectAvailable = available };
+                return Ok(result);
             }
             catch (Exception e)
             {
@@ -77,7 +78,7 @@ namespace Ihc.WebApi.Controllers
         /// <response code="503">If there is a problem connecting to the IHC controller.</response>  
         [HttpGet]
         [Route("project/file")]
-        [ProducesResponseType<string>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ProjectFile>(StatusCodes.Status200OK)]
         [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType<ProblemDetails>(StatusCodes.Status503ServiceUnavailable)]
         public async Task<IActionResult> GetProjectFile()
@@ -85,7 +86,12 @@ namespace Ihc.WebApi.Controllers
             try
             {
                 var info = await projectService.GetProjectFile();
-                return Ok(info);
+                var projectFile = new ProjectFile
+                {
+                    Size = info.Length,
+                    Content = info
+                };
+                return Ok(projectFile);
             }
             catch (Exception e)
             {
