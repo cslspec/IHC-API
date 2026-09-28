@@ -41,6 +41,7 @@ public sealed class Project
     /// <summary>
     /// The top-level groups contained in the project.
     /// </summary>
+    [JsonIgnore]
     public List<Group> Groups { get; } = [];
 
     /// <summary>
