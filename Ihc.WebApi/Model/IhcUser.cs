@@ -1,4 +1,6 @@
-﻿namespace Ihc.WebApi.Model;
+﻿using System.Text.Json.Serialization;
+
+namespace Ihc.WebApi.Model;
 
 /// <summary>
 /// Represents a user account with authentication and profile information for the IHC system.
@@ -62,5 +64,6 @@ public class IhcUser
     /// <summary>
     /// Internal authentication token for the user.
     /// </summary>
+    [JsonIgnore]
     public string? AuthToken { get; set; }
 }
