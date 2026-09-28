@@ -1,4 +1,6 @@
-﻿namespace Ihc.WebApi.Model;
+﻿using Ihc.WebApi.Model.Time;
+
+namespace Ihc.WebApi.Model;
 
 /// <summary>
 /// Represents system information for the LK IHC controller.

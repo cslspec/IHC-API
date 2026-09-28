@@ -1,6 +1,6 @@
 ﻿using Ihc.Soap.TimeManager;
 using Ihc.WebApi.Exceptions;
-using Ihc.WebApi.Model;
+using Ihc.WebApi.Model.Time;
 
 namespace Ihc.WebApi.Services
 {
@@ -62,7 +62,9 @@ namespace Ihc.WebApi.Services
                 ServiceName, "getUptime", token!, new inputMessageName5());
 
             if (response?.getUptime1 == null)
+            {
                 throw new EmptyResponseException();
+            }
 
             var timeSpan = response.getUptime1.HasValue
                 ? TimeSpan.FromMilliseconds(response.getUptime1.Value)
@@ -94,7 +96,9 @@ namespace Ihc.WebApi.Services
                 ServiceName, "getCurrentLocalTime", token!, new inputMessageName2());
 
             if (response?.getCurrentLocalTime1 == null)
+            {
                 throw new EmptyResponseException();
+            }
 
             var result = dateService.GetDateTime(response.getCurrentLocalTime1);
             return result;
@@ -112,7 +116,9 @@ namespace Ihc.WebApi.Services
                 ServiceName, "getSettings", token!, new inputMessageName3());
 
             if (response?.getSettings1 == null)
+            {
                 throw new EmptyResponseException();
+            }
 
             var info = response.getSettings1;
             var result = new TimeSettings
@@ -140,7 +146,9 @@ namespace Ihc.WebApi.Services
                 ServiceName, "getTimeFromServer", token!, new inputMessageName1());
 
             if (response?.getTimeFromServer2 == null)
+            {
                 throw new EmptyResponseException();
+            }
 
             var info = response.getTimeFromServer2;
 
@@ -216,7 +224,9 @@ namespace Ihc.WebApi.Services
                 ServiceName, "setSettings", token!, input);
 
             if (response?.setSettings2 == null)
+            {
                 throw new EmptyResponseException();
+            }
 
             var result = response.setSettings2.Value;
             return result;
