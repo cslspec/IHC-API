@@ -141,7 +141,7 @@ public class AccessControlService : IAccessControlService
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="info"/> is <c>null</c>.</exception>
     private AccessControlSetting[] GetAccessControlList(WSAccessControl info)
     {
-        ArgumentNullException.ThrowIfNull(info, nameof(info));
+        ArgumentNullException.ThrowIfNull(info);
 
         List<AccessControlSetting> list =
         [

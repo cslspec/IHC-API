@@ -92,11 +92,8 @@ public class AuthService(
 
         var respObject = xmlService.DeserializeXml<ResponseEnvelope<outputMessageName2>>(responseString);
 
-        var result = respObject?.Body.authenticate2;
-        if (result == null)
-        {
-            throw new AuthorizationException("No authorization result returned.");
-        }
+        var result = (respObject?.Body.authenticate2)
+            ?? throw new AuthorizationException("No authorization result returned.");
 
         if (result.loginWasSuccessful)
         {
@@ -157,7 +154,7 @@ public class AuthService(
             GetAwaiter().
             GetResult();
 
-        string responseString = response.Content.
+        var responseString = response.Content.
             ReadAsStringAsync().
             ConfigureAwait(false).
             GetAwaiter().

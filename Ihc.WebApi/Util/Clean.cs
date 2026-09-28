@@ -12,9 +12,6 @@ public static class Clean
     /// <returns>The value when it is positive; otherwise, <see langword="null"/>.</returns>
     public static int? Int(int value)
     {
-        if (value <= 0)
-            return null;
-
-        return value;
+        return value <= 0 ? null : value;
     }
 }

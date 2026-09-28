@@ -2,6 +2,7 @@
 using Ihc.WebApi.Exceptions;
 using Ihc.WebApi.Extensions;
 using Ihc.WebApi.Model;
+using Ihc.WebApi.Model.Time;
 using Ihc.WebApi.Util;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -63,12 +64,8 @@ public interface IConfigurationService
 /// </summary>
 /// <param name="client">The SOAP client used to communicate with the controller.</param>
 /// <param name="authCache">Service for obtaining the current authentication token.</param>
-public class ConfigurationService(
-    IClientService client,
-    IAuthCacheService authCache
-    ) : IConfigurationService
+public class ConfigurationService(IClientService client, IAuthCacheService authCache) : IConfigurationService
 {
-
     private const string ServiceName = "ConfigurationService";
 
     /// <summary>
@@ -83,7 +80,9 @@ public class ConfigurationService(
             ServiceName, "getDNSServers", token!, new inputMessageName7());
 
         if (response?.getDNSServers1 == null)
+        {
             throw new EmptyResponseException();
+        }
 
         var addresses = new List<string>();
         foreach (var item in response.getDNSServers1)
@@ -91,8 +90,8 @@ public class ConfigurationService(
             var longValue = item.ipAddress & 0xFFFFFFFFL;
 
             // Only take first 4 bytes
-            byte[] rawBytes = new byte[4];
-            for (int i = 0; i < rawBytes.Length; i++)
+            var rawBytes = new byte[4];
+            for (var i = 0; i < rawBytes.Length; i++)
             {
                 rawBytes[i] = (byte)((longValue >> (i * 8)) & 0xFF);
             }
@@ -115,7 +114,7 @@ public class ConfigurationService(
             }
         }
 
-        return addresses.ToArray();
+        return [.. addresses];
     }
 
     /// <summary>
@@ -130,7 +129,9 @@ public class ConfigurationService(
             ServiceName, "getSMTPSettings", token!, new inputMessageName5());
 
         if (response?.getSMTPSettings1 == null)
+        {
             throw new EmptyResponseException();
+        }
 
         var info = response.getSMTPSettings1;
         var result = new SmtpSettings
@@ -156,7 +157,9 @@ public class ConfigurationService(
             ServiceName, "getEmailControlSettings", token!, new inputMessageName18());
 
         if (response?.getEmailControlSettings1 == null)
+        {
             throw new EmptyResponseException();
+        }
 
         var info = response.getEmailControlSettings1;
         var result = new EmailSettings
@@ -184,10 +187,9 @@ public class ConfigurationService(
         var response = await client.Post<inputMessageName17, outputMessageName17>(
             ServiceName, "getEmailControlEnabled", token!, new inputMessageName17());
 
-        if (response?.getEmailControlEnabled1 == null)
-            throw new EmptyResponseException();
-
-        return response.getEmailControlEnabled1.Value;
+        return response?.getEmailControlEnabled1 == null
+            ? throw new EmptyResponseException()
+            : response.getEmailControlEnabled1.Value;
     }
 
     /// <summary>
@@ -202,7 +204,9 @@ public class ConfigurationService(
             ServiceName, "getNetworkSettings", token!, new inputMessageName12());
 
         if (response?.getNetworkSettings1 == null)
+        {
             throw new EmptyResponseException();
+        }
 
         var info = response.getNetworkSettings1;
         var result = new NetworkSetting
