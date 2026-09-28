@@ -62,13 +62,10 @@ namespace Ihc.WebApi.Services
                     response.StatusCode);
             }
 
-            string responseString = await response.Content.ReadAsStringAsync();
+            var responseString = await response.Content.ReadAsStringAsync();
 
-            var respObject = xmlService.DeserializeXml<ResponseEnvelope<U>>(responseString);
-            if (respObject == null)
-            {
-                throw new EmptyResponseException();
-            }
+            var respObject = xmlService.DeserializeXml<ResponseEnvelope<U>>(responseString)
+                ?? throw new EmptyResponseException();
 
             var result = respObject.Body;
             return result;
