@@ -1,6 +1,5 @@
 ﻿using System.Xml.Linq;
 
-#nullable disable
 namespace Ihc.Project.Model;
 
 /// <summary>
@@ -8,7 +7,6 @@ namespace Ihc.Project.Model;
 /// </summary>
 /// <param name="node">The XML element containing the product.</param>
 /// <param name="group">The group that contains the product.</param>
-public class DatalineProduct(XElement node, Group group)
+public sealed class DatalineProduct(XElement node, Group group)
     : Product(node, group)
-{
-}
+{ }

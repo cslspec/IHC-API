@@ -1,38 +1,26 @@
 ﻿using System.Text.Json.Serialization;
 using System.Xml.Linq;
 
-#nullable disable
 namespace Ihc.Project.Model;
 
 /// <summary>
 /// Parses and exposes groups and objects from an IHC project XML document.
 /// </summary>
-public class Project
+public sealed class Project
 {
-    /// <summary>Gets the top-level groups contained in the project.</summary>
-    public List<Group> Groups;
-
-    /// <summary>Gets the source XML document.</summary>
-    [JsonIgnore]
-    public XDocument Xml { get; protected set; }
-
-    /// <summary>Gets the project objects indexed by their numeric identifiers.</summary>
-    public Dictionary<int, BaseObject> ObjectMap { get; protected set; }
-
     /// <summary>
     /// Initializes a project by parsing its groups from an XML document.
     /// </summary>
     /// <param name="xml">The XML document containing an IHC project.</param>
     public Project(XDocument xml)
     {
-        this.Xml = xml;
-        this.Groups = new List<Group>();
-        this.ObjectMap = new Dictionary<int, BaseObject>();
-        foreach (XElement element in this.Xml.Element((XName)"utcs_project").Element((XName)"groups").Elements((XName)"group"))
+        Xml = xml;
+
+        foreach (var element in Xml.Element((XName)"utcs_project")?.Element((XName)"groups")?.Elements((XName)"group") ?? [])
         {
-            Group group = new Group(element, this);
-            this.Groups.Add(group);
-            this.AddObjectMapping(group.Id, (BaseObject)group);
+            var group = new Group(element, this);
+            Groups.Add(group);
+            AddObjectMapping(group.Id, group);
         }
     }
 
@@ -42,7 +30,63 @@ public class Project
     /// <param name="xml">The XML text containing an IHC project.</param>
     public Project(string xml)
       : this(XDocument.Parse(xml))
+    { }
+
+    /// <summary>
+    /// The default modification date and time used when the project does not specify a valid modification timestamp.
+    /// </summary>
+    [JsonIgnore]
+    public static readonly DateTime DefaultModified = new(2000, 1, 1, 0, 0, 0, DateTimeKind.Local);
+
+    /// <summary>
+    /// The top-level groups contained in the project.
+    /// </summary>
+    public List<Group> Groups { get; } = [];
+
+    /// <summary>
+    /// The source XML document.
+    /// </summary>
+    [JsonIgnore]
+    public XDocument Xml { get; }
+
+    /// <summary>
+    /// Project objects indexed by their numeric identifiers.
+    /// </summary>
+    public Dictionary<int, BaseObject> ObjectMap { get; } = [];
+
+    /// <summary>
+    /// The project modification date and time.
+    /// </summary>
+    public DateTime LastModified
     {
+        get
+        {
+            var element = Xml.Element((XName)"utcs_project")?.Element((XName)"modified");
+            if (element == null)
+            {
+                return DefaultModified;
+            }
+
+            var year = ParseIntAttribute(element, "year");
+            var month = ParseIntAttribute(element, "month");
+            var day = ParseIntAttribute(element, "day");
+            var hour = ParseIntAttribute(element, "hour");
+            var minute = ParseIntAttribute(element, "minute");
+
+            if (year == null || month == null || day == null || hour == null || minute == null)
+            {
+                return DefaultModified;
+            }
+
+            try
+            {
+                return new DateTime(year.Value, month.Value, day.Value, hour.Value, minute.Value, 0, DateTimeKind.Local);
+            }
+            catch
+            {
+                return DefaultModified;
+            }
+        }
     }
 
     /// <summary>
@@ -52,18 +96,22 @@ public class Project
     /// <param name="obj">The object to associate with the identifier.</param>
     public void AddObjectMapping(int id, BaseObject obj)
     {
-        if (this.ObjectMap.ContainsKey(id))
+        if (ObjectMap.ContainsKey(id))
+        {
             return;
-        this.ObjectMap.Add(id, obj);
+        }
+
+        ObjectMap.Add(id, obj);
     }
 
-    /// <summary>Gets the project modification date and time stored in the XML.</summary>
-    public DateTime LastModified
+    private static int? ParseIntAttribute(XElement element, string attributeName)
     {
-        get
+        if (element == null)
         {
-            XElement xelement = this.Xml.Element((XName)"utcs_project").Element((XName)"modified");
-            return new DateTime(int.Parse(xelement.Attribute((XName)"year").Value), int.Parse(xelement.Attribute((XName)"month").Value), int.Parse(xelement.Attribute((XName)"day").Value), int.Parse(xelement.Attribute((XName)"hour").Value), int.Parse(xelement.Attribute((XName)"minute").Value), 0);
+            return null;
         }
+
+        var attributeValue = element.Attribute((XName)attributeName)?.Value;
+        return int.TryParse(attributeValue, out var result) ? result : null;
     }
 }

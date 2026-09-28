@@ -1,6 +1,5 @@
 ﻿using System.Xml.Linq;
 
-#nullable disable
 namespace Ihc.Project.Model;
 
 /// <summary>
@@ -8,7 +7,6 @@ namespace Ihc.Project.Model;
 /// </summary>
 /// <param name="node">The XML element containing the input resource.</param>
 /// <param name="parent">The parent object that contains the resource.</param>
-public class InputResource(XElement node, BaseObject parent)
+public sealed class InputResource(XElement node, BaseObject parent)
     : Resource(node, parent)
-{
-}
+{ }

@@ -1,6 +1,5 @@
 ﻿using System.Xml.Linq;
 
-#nullable disable
 namespace Ihc.Project.Model;
 
 /// <summary>
@@ -8,15 +7,16 @@ namespace Ihc.Project.Model;
 /// </summary>
 /// <param name="node">The XML element containing the link.</param>
 /// <param name="resource">The resource associated with the link.</param>
-public class Link(XElement node, Resource resource)
+public sealed class Link(XElement node, Resource resource)
     : BaseObject(node, resource)
 {
-    /// <summary>Gets the resource associated with this link.</summary>
-    public Resource Resource => this.Parent as Resource;
+    /// <summary>
+    /// The resource associated with this link.
+    /// </summary>
+    public Resource? Resource => Parent as Resource;
 
-    /// <summary>Gets the identifier of the linked resource.</summary>
-    public int LinkId
-    {
-        get => Convert.ToInt32(this.XmlNode.Attribute((XName)"link").Value.Substring(3), 16);
-    }
+    /// <summary>
+    /// The identifier of the linked resource.
+    /// </summary>
+    public int LinkId => Convert.ToInt32(XmlNode.Attribute((XName)"link")?.Value[3..], 16);
 }

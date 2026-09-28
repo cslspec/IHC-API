@@ -1,63 +1,84 @@
 ﻿using System.Text.Json.Serialization;
 using System.Xml.Linq;
 
-#nullable disable
 namespace Ihc.Project.Model;
 
 /// <summary>
 /// Represents a named object parsed from an IHC project XML document.
 /// </summary>
-public class BaseObject
+public abstract class BaseObject
 {
+    /// <summary>
+    /// Parent object in the project hierarchy.
+    /// </summary>
+    [JsonIgnore]
+    public BaseObject? Parent { get; }
+
+    /// <summary>
+    /// Project that contains this object.
+    /// </summary>
+    [JsonIgnore]
+    public virtual Project? Project => Parent?.Project;
+
+    /// <summary>
+    /// Slash-delimited path of this object in the project hierarchy.
+    /// </summary>
+    public string Path => (Parent != null ? Parent.Path + "/" : string.Empty) + Name;
+
+    /// <summary>
+    /// Numeric object identifier parsed from the XML <c>id</c> attribute.
+    /// Zero when the attribute is missing or invalid.
+    /// </summary>
+    public int Id => Convert.ToInt32(XmlNode.Attribute((XName)"id")?.Value[3..] ?? "0", 16);
+
+    /// <summary>
+    /// Object's name from the XML <c>name</c> attribute.
+    /// Empty string when the attribute is missing.
+    /// </summary>
+    public string Name
+    {
+        get => XmlNode.Attribute((XName)"name")?.Value ?? string.Empty;
+        set => XmlNode.Attribute((XName)"name")?.Value = value;
+    }
+
+    /// <summary>
+    /// Object's icon identifier, or zero when no icon is specified.
+    /// </summary>
+    public int Icon
+    {
+        get
+        {
+            var xattribute = XmlNode.Attribute((XName)"icon");
+            return xattribute == null ? 0 : Convert.ToInt32(xattribute.Value[3..], 16);
+        }
+    }
+
+    /// <summary>
+    /// Runtime model type name of this object.
+    /// </summary>
+    public string ObjectType => GetType().Name;
+
+    /// <summary>
+    /// XML element from which this object was parsed.
+    /// </summary>
+    [JsonIgnore]
+    protected XElement XmlNode { get; set; }
+
     /// <summary>
     /// Initializes an object from its XML element and parent object.
     /// </summary>
     /// <param name="node">The XML element containing this object's data.</param>
     /// <param name="parent">The parent object, or <see langword="null"/> for a root object.</param>
-    public BaseObject(XElement node, BaseObject parent)
+    protected BaseObject(XElement node, BaseObject? parent)
     {
-        this.XmlNode = node;
-        this.Parent = parent;
-        if (this.Project == null)
-            return;
-        this.Project.AddObjectMapping(this.Id, this);
-    }
+        XmlNode = node;
+        Parent = parent;
 
-    /// <summary>Gets the parent object in the project hierarchy.</summary>
-    [JsonIgnore]
-    public BaseObject Parent { get; protected set; }
-
-    /// <summary>Gets the project that contains this object.</summary>
-    [JsonIgnore]
-    public virtual Project Project => this.Parent.Project;
-
-    /// <summary>Gets the slash-delimited path of this object in the project hierarchy.</summary>
-    public string Path => (this.Parent != null ? this.Parent.Path + "/" : "") + this.Name;
-
-    /// <summary>Gets or sets the XML element from which this object was parsed.</summary>
-    [JsonIgnore]
-    protected XElement XmlNode { get; set; }
-
-    /// <summary>Gets the numeric object identifier parsed from the XML <c>id</c> attribute.</summary>
-    public int Id => Convert.ToInt32(this.XmlNode.Attribute((XName)"id").Value.Substring(3), 16);
-
-    /// <summary>Gets or sets the object's name from the XML <c>name</c> attribute.</summary>
-    public string Name
-    {
-        get => this.XmlNode.Attribute((XName)"name").Value;
-        set => this.XmlNode.Attribute((XName)"name").Value = value;
-    }
-
-    /// <summary>Gets the object's icon identifier, or zero when no icon is specified.</summary>
-    public int Icon
-    {
-        get
+        if (Project == null)
         {
-            XAttribute xattribute = this.XmlNode.Attribute((XName)"icon");
-            return xattribute == null ? 0 : Convert.ToInt32(xattribute.Value.Substring(3), 16);
+            return;
         }
-    }
 
-    /// <summary>Gets the runtime model type name of this object.</summary>
-    public string ObjectType => this.GetType().Name;
+        Project.AddObjectMapping(Id, this);
+    }
 }
