@@ -26,7 +26,7 @@ namespace Ihc.WebApi.Services
         /// Retrieves and decompresses the current IHC project file.
         /// </summary>
         /// <returns>The project file contents as text.</returns>
-        /// <exception cref="EmptyResponseException">The controller returns no project data.</exception>
+        /// <exception cref="EmptyResponseException">The controller returns no project information or segment data.</exception>
         Task<string> GetProjectFile();
     }
 
@@ -63,7 +63,9 @@ namespace Ihc.WebApi.Services
                 ServiceName, "getProjectInfo", token!, new inputMessageName11());
 
             if (response?.getProjectInfo1 == null)
+            {
                 throw new EmptyResponseException();
+            }
 
             var info = response.getProjectInfo1;
             var result = new ProjectInfo
@@ -85,13 +87,40 @@ namespace Ihc.WebApi.Services
         public async Task<string> GetProjectFile()
         {
             var token = authCache.GetAuthToken().Token;
-            var response = await client.Post<inputMessageName12, outputMessageName12>(
-                ServiceName, "getIHCProject", token!, new inputMessageName12());
+            var infoResponse = await client.Post<inputMessageName11, outputMessageName11>(
+                ServiceName, "getProjectInfo", token!, new inputMessageName11());
 
-            if (response?.getIHCProject1 == null)
-                throw new EmptyResponseException();
+            var info = (infoResponse?.getProjectInfo1)
+                ?? throw new EmptyResponseException("The controller returned no project information.");
 
-            using MemoryStream mscompressed = new(response.getIHCProject1.data);
+            var countResponse = await client.Post<inputMessageName8, outputMessageName8>(
+                ServiceName, "getIHCProjectNumberOfSegments", token!, new inputMessageName8());
+
+            var segmentCount = countResponse?.getIHCProjectNumberOfSegments1;
+            if (segmentCount is null or <= 0)
+            {
+                throw new EmptyResponseException("The controller returned no project segments.");
+            }
+
+            using MemoryStream mscompressed = new();
+            for (var segmentIndex = 0; segmentIndex < segmentCount.Value; segmentIndex++)
+            {
+                var segmentResponse = await client.Post<inputMessageName5, outputMessageName5>(
+                    ServiceName,
+                    "getIHCProjectSegment",
+                    token!,
+                    new inputMessageName5(
+                        segmentIndex,
+                        info.projectMajorRevision,
+                        info.projectMinorRevision));
+
+                var segmentData = (segmentResponse?.getIHCProjectSegment4?.data)
+                    ?? throw new EmptyResponseException($"The controller returned no data for project segment {segmentIndex}.");
+
+                await mscompressed.WriteAsync(segmentData);
+            }
+
+            mscompressed.Position = 0;
             using Stream inStream = new System.IO.Compression.GZipStream(mscompressed, System.IO.Compression.CompressionMode.Decompress);
             using StreamReader reader = new(inStream, System.Text.Encoding.GetEncoding("ISO-8859-1"));
             var text = await reader.ReadToEndAsync();
