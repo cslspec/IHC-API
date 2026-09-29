@@ -56,6 +56,8 @@ builder.Services.AddHttpClient();
 
 var app = builder.Build();
 
+app.UseExceptionHandler();
+
 app.UseSwagger();
 app.UseSwaggerUI();
 app.MapSwagger("/openapi/{documentName}.json");

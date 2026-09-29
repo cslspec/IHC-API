@@ -54,9 +54,9 @@ public interface IConfigurationService
     /// Updates the SMTP settings on the LK IHC controller.
     /// </summary>
     /// <param name="settings">The SMTP settings to apply.</param>
-    /// <returns><see langword="null"/> when the update request completes.</returns>
+    /// <returns>A task that completes when the update request has been sent.</returns>
     /// <exception cref="HttpRequestException">The controller cannot be reached.</exception>
-    Task<ProblemDetails?> UpdateSmtpSettings(SmtpSettings settings);
+    Task UpdateSmtpSettings(SmtpSettings settings);
 }
 
 /// <summary>
@@ -269,9 +269,9 @@ public class ConfigurationService(IClientService client, IAuthCacheService authC
     /// Updates the SMTP settings on the LK IHC controller.
     /// </summary>
     /// <param name="settings">The SMTP settings to apply.</param>
-    /// <returns><see langword="null"/> when the update request completes.</returns>
+    /// <returns>A task that completes when the update request has been sent.</returns>
     /// <exception cref="HttpRequestException">The controller cannot be reached.</exception>
-    public async Task<ProblemDetails?> UpdateSmtpSettings(SmtpSettings settings)
+    public async Task UpdateSmtpSettings(SmtpSettings settings)
     {
         var token = authCache.GetAuthToken().Token;
         var input = new inputMessageName4
@@ -287,7 +287,5 @@ public class ConfigurationService(IClientService client, IAuthCacheService authC
 
         await client.Post<inputMessageName4, outputMessageName4>(
             ServiceName, "setSMTPSettings", token!, input);
-
-        return null;
     }
 }

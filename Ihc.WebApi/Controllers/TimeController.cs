@@ -1,4 +1,4 @@
-﻿using Ihc.WebApi.Model.Time;
+using Ihc.WebApi.Model.Time;
 using Ihc.WebApi.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,113 +8,77 @@ namespace Ihc.WebApi.Controllers;
 /// Provides endpoints for time-related operations via the IHC TimeManagerService API.
 /// </summary>
 /// <param name="timeService">Service for retrieving and updating controller time data.</param>
-/// <param name="problemService">Service for creating API problem details.</param>
 [ApiController]
-[Route("api")]
-public class TimeController(ITimeService timeService, IProblemService problemService) : ControllerBase
+[Route("api/time")]
+[ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
+[ProducesResponseType<ProblemDetails>(StatusCodes.Status503ServiceUnavailable)]
+public class TimeController(ITimeService timeService) : ControllerBase
 {
     /// <summary>
-    /// Retrieves the system's uptime.
+    /// Get system uptime.
     /// </summary>
+    /// <remarks>
+    /// Retrieves the system's uptime from the IHC controller.
+    /// </remarks>
     /// <returns>An <see cref="Uptime"/> object representing the system's uptime.</returns>
     /// <response code="200">Returns the system uptime.</response>
     /// <response code="500">If there is an error retrieving the uptime.</response>
-    /// <response code="503">If there is a problem connecting to the IHC controller.</response>  
-    [HttpGet]
-    [Route("time/uptime")]
+    /// <response code="503">If there is a problem connecting to the IHC controller.</response>
+    [HttpGet("uptime")]
     [ProducesResponseType<Uptime>(StatusCodes.Status200OK)]
-    [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
-    [ProducesResponseType<ProblemDetails>(StatusCodes.Status503ServiceUnavailable)]
-    public async Task<IActionResult> GetUptime()
+    public async Task<ActionResult<Uptime>> GetUptime()
     {
-        try
-        {
-            var info = await timeService.GetUptime();
-            return Ok(info);
-        }
-        catch (Exception e)
-        {
-            var problem = problemService.GetProblemDetails(e);
-            return StatusCode(problem.Status ?? 500, problem);
-        }
+        return await timeService.GetUptime();
     }
 
     /// <summary>
-    /// Retrieves the current local time.
+    /// Get local time.
     /// </summary>
-    /// <returns>The current local time as a <see cref="DateTime"/>.</returns>
+    /// <remarks>
+    /// Retrieves the current local time from the IHC controller.
+    /// </remarks>
+    /// <returns>The current local time of the controller.</returns>
     /// <response code="200">Returns the current local time.</response>
     /// <response code="500">If there is an error retrieving the local time.</response>
-    /// <response code="503">If there is a problem connecting to the IHC controller.</response>  
-    [HttpGet]
-    [Route("time/localtime")]
+    /// <response code="503">If there is a problem connecting to the IHC controller.</response>
+    [HttpGet("localtime")]
     [ProducesResponseType<CurrentTime>(StatusCodes.Status200OK)]
-    [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
-    [ProducesResponseType<ProblemDetails>(StatusCodes.Status503ServiceUnavailable)]
-    public async Task<IActionResult> GetLocalTime()
+    public async Task<ActionResult<CurrentTime>> GetLocalTime()
     {
-        try
-        {
-            var info = await timeService.GetLocalTime();
-            var result = new CurrentTime { CurrentLocalTime = info };
-            return Ok(result);
-        }
-        catch (Exception e)
-        {
-            var problem = problemService.GetProblemDetails(e);
-            return StatusCode(problem.Status ?? 500, problem);
-        }
+        return new CurrentTime { CurrentLocalTime = await timeService.GetLocalTime() };
     }
 
     /// <summary>
-    /// Retrieves the current time settings.
+    /// Get time settings.
     /// </summary>
+    /// <remarks>
+    /// Retrieves the current time settings from the IHC controller.
+    /// </remarks>
     /// <returns>A <see cref="TimeSettings"/> object representing the current configuration.</returns>
     /// <response code="200">Returns the current time settings.</response>
     /// <response code="500">If there is an error retrieving the time settings.</response>
-    /// <response code="503">If there is a problem connecting to the IHC controller.</response>  
-    [HttpGet]
-    [Route("time/settings")]
+    /// <response code="503">If there is a problem connecting to the IHC controller.</response>
+    [HttpGet("settings")]
     [ProducesResponseType<TimeSettings>(StatusCodes.Status200OK)]
-    [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
-    [ProducesResponseType<ProblemDetails>(StatusCodes.Status503ServiceUnavailable)]
-    public async Task<IActionResult> GetSettings()
+    public async Task<ActionResult<TimeSettings>> GetSettings()
     {
-        try
-        {
-            var info = await timeService.GetSettings();
-            return Ok(info);
-        }
-        catch (Exception e)
-        {
-            var problem = problemService.GetProblemDetails(e);
-            return StatusCode(problem.Status ?? 500, problem);
-        }
+        return await timeService.GetSettings();
     }
 
     /// <summary>
-    /// Retrieves the current time from the configured time server through the IHC controller.
+    /// Test time server connection.
     /// </summary>
+    /// <remarks>
+    /// Retrieves the current time from the configured time server through the IHC controller.
+    /// </remarks>
     /// <returns>A <see cref="TimeServerConnectionResult"/> object containing connection details and time.</returns>
     /// <response code="200">Returns the server time and connection details.</response>
     /// <response code="500">If there is an error retrieving the server time.</response>
-    /// <response code="503">If there is a problem connecting to the IHC controller.</response>  
-    [HttpGet]
-    [Route("time/settings/test")]
+    /// <response code="503">If there is a problem connecting to the IHC controller.</response>
+    [HttpPost("settings/test")]
     [ProducesResponseType<TimeServerConnectionResult>(StatusCodes.Status200OK)]
-    [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
-    [ProducesResponseType<ProblemDetails>(StatusCodes.Status503ServiceUnavailable)]
-    public async Task<IActionResult> GetTimeFromServer()
+    public async Task<ActionResult<TimeServerConnectionResult>> GetTimeFromServer()
     {
-        try
-        {
-            var info = await timeService.GetTimeFromServer();
-            return Ok(info);
-        }
-        catch (Exception e)
-        {
-            var problem = problemService.GetProblemDetails(e);
-            return StatusCode(problem.Status ?? 500, problem);
-        }
+        return await timeService.GetTimeFromServer();
     }
 }

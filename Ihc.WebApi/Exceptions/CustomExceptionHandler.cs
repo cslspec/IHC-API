@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
+using Ihc.WebApi.Services;
+using Microsoft.AspNetCore.Diagnostics;
 
 namespace Ihc.WebApi.Exceptions
 {
@@ -21,17 +21,16 @@ namespace Ihc.WebApi.Exceptions
             Exception exception,
             CancellationToken cancellationToken)
         {
-            var problemDetails = new ProblemDetails
+            // The client disconnected, so there is nobody to write a response to.
+            if (exception is OperationCanceledException && httpContext.RequestAborted.IsCancellationRequested)
             {
-                Status = exception switch
-                {
-                    ArgumentException => StatusCodes.Status400BadRequest,
-                    _ => StatusCodes.Status500InternalServerError
-                },
-                Title = "An error occurred",
-                Type = exception.GetType().Name,
-                Detail = exception.Message
-            };
+                return true;
+            }
+
+            // The handler is a singleton while the problem service is scoped to the request.
+            var problemService = httpContext.RequestServices.GetRequiredService<IProblemService>();
+            var problemDetails = problemService.GetProblemDetails(exception);
+            httpContext.Response.StatusCode = problemDetails.Status ?? StatusCodes.Status500InternalServerError;
 
             return await problemDetailsService.TryWriteAsync(new ProblemDetailsContext
             {
