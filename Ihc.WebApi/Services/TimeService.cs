@@ -136,13 +136,20 @@ public class TimeService(
     }
 
     /// <summary>
-    /// Retrieves the current time on the IHC system directly from the time configured server server.
+    /// Retrieves the current time from a time server through the IHC controller.
     /// </summary>
     /// <param name="serverName">The time server to query, or <see langword="null"/> to query the configured time server.</param>
     /// <returns>A <see cref="TimeServerConnectionResult"/> object containing connection details and time.</returns>
     /// <exception cref="EmptyResponseException">Thrown if the response is null or contains no data.</exception>
     public async Task<TimeServerConnectionResult> GetTimeFromServer(string? serverName = null)
     {
+        // The controller does not fall back to the configured server, so a server name is always sent.
+        serverName = serverName?.Trim();
+        if (string.IsNullOrEmpty(serverName))
+        {
+            serverName = (await GetSettings()).TimeServerName?.Trim();
+        }
+
         var token = authCache.GetAuthToken().Token;
         var response = await client.Post<inputMessageName1, outputMessageName1>(
             ServiceName, "getTimeFromServer", token!, new inputMessageName1(serverName));

@@ -92,16 +92,18 @@ public class TimeController(ITimeService timeService) : ControllerBase
     /// Test time server connection.
     /// </summary>
     /// <remarks>
-    /// Retrieves the current time from the configured time server through the IHC controller.
+    /// Retrieves the current time from a time server through the IHC controller.
+    /// Tests the configured time server unless another server is given.
     /// </remarks>
+    /// <param name="serverName">The time server to test. Leave out to test the configured time server.</param>
     /// <returns>A <see cref="TimeServerConnectionResult"/> object containing connection details and time.</returns>
     /// <response code="200">Returns the server time and connection details.</response>
     /// <response code="500">If there is an error retrieving the server time.</response>
     /// <response code="503">If there is a problem connecting to the IHC controller.</response>
     [HttpPost("settings/test")]
     [ProducesResponseType<TimeServerConnectionResult>(StatusCodes.Status200OK)]
-    public async Task<ActionResult<TimeServerConnectionResult>> GetTimeFromServer()
+    public async Task<ActionResult<TimeServerConnectionResult>> GetTimeFromServer([FromQuery] string? serverName = null)
     {
-        return await timeService.GetTimeFromServer();
+        return await timeService.GetTimeFromServer(serverName);
     }
 }
