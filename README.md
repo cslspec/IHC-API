@@ -1,42 +1,120 @@
 # IHC API
 
-This project consists of multiple components that interact with each other to provide a comprehensive API for managing IHC projects.
-The main components are:
+A REST API for the LK IHC home automation controller.
 
-- **Ihc.Project**: Contains the core models and logic for handling IHC projects.
-- **Ihc.Soap**: Implements SOAP-based services for various operations related to IHC projects, including authentication, configuration, and project management.
-- **Ihc.WebApi**: Provides a RESTful API for interacting with IHC projects, exposing endpoints for project information, file retrieval, and more.
+The IHC controller exposes its functionality through a set of SOAP web services (`/ws/AuthenticationService`, `/ws/ControllerService`, `/ws/TimeManagerService`, ...). IHC API is an ASP.NET Core web application that sits between your client and the controller: it logs in with a configured user account, calls the SOAP services on your behalf and returns plain JSON. It also downloads the project file from the controller and parses it into a structured model of groups, products, resources and scenes.
 
-## Project Structure
+## Features
 
-- **Ihc.Project**
-  - `Model/`: Contains the core models such as `Project`, `Product`, and related classes.
-  - `Ihc.Project.csproj`: Project file for Ihc.Project.
+The API currently offers read access to the controller and a few configuration updates:
 
-- **Ihc.Soap**
-  - `Authentication.cs`, `Configuration.cs`, `Controller.cs`, etc.: Implement various SOAP services.
-  - `Ihc.Soap.csproj`: Project file for Ihc.Soap.
+| Area | Endpoints | Description |
+| --- | --- | --- |
+| Project | `GET /api/project/available`<br>`GET /api/project/info`<br>`GET /api/project/file`<br>`GET /api/project/model` | Project availability and metadata, the raw project XML, and the parsed project model. |
+| Time | `GET /api/time/uptime`<br>`GET /api/time/localtime`<br>`GET /api/time/settings`<br>`POST /api/time/settings/test` | Uptime, controller clock, time settings, and a test of the configured time server. |
+| Configuration | `GET /api/config/system`<br>`GET /api/config/network`<br>`GET /api/config/dns`<br>`GET` / `POST /api/config/smtp`<br>`GET /api/config/email`<br>`GET /api/config/email/enable`<br>`GET /api/config/access` | System information, network and DNS settings, SMTP and email settings, and web access control. |
+| Session | `POST /api/config/logout` | Logs out of the controller and clears the cached session. |
+| Users | `GET /api/users` | Users defined on the controller (passwords are not returned). |
 
-- **Ihc.WebApi**
-  - `Controllers/`: Contains API controllers like `ProjectController`.
-  - `Services/`: Contains service classes like `ProjectService`.
-  - `Ihc.WebApi.csproj`: Project file for Ihc.WebApi.
+The full, up-to-date endpoint reference with request and response schemas is available in the built-in API documentation (see [API documentation](#api-documentation)).
 
-## Key Features
+### Sessions
 
-- **SOAP Services**: Provides SOAP-based services for operations like project segmentation, subscription management, and more.
-- **RESTful API**: Exposes endpoints for project information, file retrieval, and other operations.
-- **Core Models**: Defines the core models and logic for handling IHC projects.
+You do not log in to IHC API itself. The API logs in to the controller with the credentials from the configuration the first time a request needs it, and reuses that session for 20 minutes before logging in again. Call `POST /api/config/logout` to end the session immediately.
 
-# Docker
+### Errors
 
-## Build Docker image
+Errors are returned as [RFC 9457 problem details](https://www.rfc-editor.org/rfc/rfc9457):
 
-Build Docker image:
-> sudo docker build -t local/ihc-api -f Dockerfile .
+- `400 Bad Request`: the request is invalid.
+- `500 Internal Server Error`: the controller returned an error or an unexpected response.
+- `503 Service Unavailable`: the controller cannot be reached or rejected the login (invalid account, connection restrictions or insufficient user rights).
 
-Test the image:
-> sudo docker run -it -p 8080:8080 --rm local/ihc-api
+> **Security note:** IHC API has no authentication of its own. Anyone who can reach the API can use it with the rights of the configured controller user. Only run it on a trusted network.
 
-Open in a browser:
-http://localhost:8080/swagger/index.html
+## Requirements
+
+- [.NET 10 SDK](https://dotnet.microsoft.com/download) to build and run from source, or Docker.
+- An IHC controller reachable over the network, and a user account on it.
+
+## Configuration
+
+Controller settings live in the `controller` section of [Ihc.WebApi/appsettings.json](Ihc.WebApi/appsettings.json):
+
+```json
+"controller": {
+  "Address": "http://192.168.0.2",
+  "UserName": "<INSERT USERNAME>",
+  "Password": "<INSERT PASSWORD>",
+  "Application": "openapi"
+}
+```
+
+| Setting | Description |
+| --- | --- |
+| `Address` | Base URL of the IHC controller, including `http://` or `https://`. |
+| `UserName` | User name of an account on the controller. |
+| `Password` | Password for that account. |
+| `Application` | Application name sent to the controller when logging in. |
+
+The application does not start if the `controller` section is missing.
+
+To keep credentials out of the file, use environment variables instead. ASP.NET Core maps `controller__Address`, `controller__UserName`, `controller__Password` and `controller__Application` onto the same settings, and environment variables take precedence over `appsettings.json`.
+
+By default the API listens on `http://*:8080`. Change `Kestrel:Endpoints:Http:Url` in `appsettings.json` to use another port.
+
+## Running from source
+
+```sh
+git clone https://github.com/cslspec/IHC-API.git
+cd IHC-API
+dotnet run --project Ihc.WebApi
+```
+
+Then open http://localhost:8080/scalar in a browser.
+
+## Running with Docker
+
+Build the image from the repository root:
+
+```sh
+docker build -t local/ihc-api -f Dockerfile .
+```
+
+Run it, passing the controller settings as environment variables:
+
+```sh
+docker run -it --rm -p 8080:8080 \
+  -e controller__Address=http://192.168.0.2 \
+  -e controller__UserName=myuser \
+  -e controller__Password=mypassword \
+  local/ihc-api
+```
+
+On Linux you may need to prefix the commands with `sudo`.
+
+## API documentation
+
+While the API is running, interactive documentation is available at:
+
+- Scalar: http://localhost:8080/scalar
+- Swagger UI: http://localhost:8080/swagger
+- OpenAPI document: http://localhost:8080/openapi/v1.json
+
+Example request:
+
+```sh
+curl http://localhost:8080/api/project/info
+```
+
+## Project structure
+
+| Project | Description |
+| --- | --- |
+| [Ihc.WebApi](Ihc.WebApi/) | The ASP.NET Core application: controllers (`Controllers/`), services that call the controller's SOAP endpoints (`Services/`), response models (`Model/`) and error handling (`Exceptions/`). |
+| [Ihc.Soap](Ihc.Soap/) | SOAP message contracts for the controller's web services, generated with `dotnet-svcutil`. IHC API uses them to serialize requests and deserialize responses. |
+| [Ihc.Project](Ihc.Project/) | Parser for the IHC project file (XML) that builds the model of groups, products, resources, links and scenes. It has no dependencies on the other projects. |
+
+## License
+
+IHC API is released under the [MIT License](LICENSE).
