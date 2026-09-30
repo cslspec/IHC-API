@@ -154,16 +154,16 @@ public class TimeService(
 
         var info = response.getTimeFromServer2;
 
-        var baseline = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Unspecified);
-        var time = baseline.AddSeconds(info.dateFromServer);
-
+        // The controller reports the server time in milliseconds since the Unix epoch.
         var result = new TimeServerConnectionResult
         {
             ConnectionWasSuccessful = info.connectionWasSuccessful,
             ConnectionFailedDueToUnknownHost = info.connectionFailedDueToUnknownHost,
             ConnectionFailedDueToOtherErrors = info.connectionFailedDueToOtherErrors,
-            Seconds = info.connectionWasSuccessful ? info.dateFromServer : null,
-            Time = info.connectionWasSuccessful ? time : null
+            Milliseconds = info.connectionWasSuccessful ? info.dateFromServer : null,
+            Time = info.connectionWasSuccessful
+                ? DateTimeOffset.FromUnixTimeMilliseconds(info.dateFromServer).UtcDateTime
+                : null
         };
 
         return result;

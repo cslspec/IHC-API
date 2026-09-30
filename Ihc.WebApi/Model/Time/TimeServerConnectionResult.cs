@@ -26,14 +26,14 @@ public class TimeServerConnectionResult
     public required bool ConnectionFailedDueToOtherErrors { get; set; }
 
     /// <summary>
-    /// Gets the number of seconds reported by the time server, if available.
+    /// Gets the time reported by the time server in milliseconds since the Unix epoch (1970-01-01 UTC), if available.
     /// This value is <c>null</c> if the connection was unsuccessful or the time data is not provided.
     /// </summary>
-    /// <example>1682345678</example>
-    public required long? Seconds { get; set; }
+    /// <example>1790797281432</example>
+    public required long? Milliseconds { get; set; }
 
     /// <summary>
-    /// Gets the current time reported by the time server, if available.
+    /// Gets the current time in UTC reported by the time server, if available.
     /// This value is <c>null</c> if the connection was unsuccessful or the time data is not provided.
     /// </summary>
     /// <example>2024-06-08T12:34:56Z</example>
