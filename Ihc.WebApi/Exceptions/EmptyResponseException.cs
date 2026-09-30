@@ -3,7 +3,7 @@
 /// <summary>
 /// Exception thrown when a response is expected but is empty.
 /// </summary>
-public class EmptyResponseException : System.Exception
+public class EmptyResponseException : Exception
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="EmptyResponseException"/> class.
@@ -21,5 +21,5 @@ public class EmptyResponseException : System.Exception
     /// </summary>
     /// <param name="message">The message that describes the error.</param>
     /// <param name="innerException">The exception that is the cause of the current exception.</param>
-    public EmptyResponseException(string message, System.Exception innerException) : base(message, innerException) { }
+    public EmptyResponseException(string message, Exception innerException) : base(message, innerException) { }
 }
