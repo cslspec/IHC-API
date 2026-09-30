@@ -23,16 +23,17 @@ public interface ITimeService
     /// <exception cref="EmptyResponseException">The controller returns no settings.</exception>
     Task<TimeSettings> GetSettings();
 
-    /// <summary>Queries the configured time server for its current time.</summary>
+    /// <summary>Queries a time server for its current time.</summary>
+    /// <param name="serverName">The time server to query, or <see langword="null"/> to query the configured time server.</param>
     /// <returns>The connection result and, when successful, the server time.</returns>
     /// <exception cref="EmptyResponseException">The controller returns no connection result.</exception>
-    Task<TimeServerConnectionResult> GetTimeFromServer();
+    Task<TimeServerConnectionResult> GetTimeFromServer(string? serverName = null);
 
-    /// <summary>Updates the controller's time settings.</summary>
-    /// <param name="settings">The settings to apply.</param>
-    /// <returns>The controller's update result.</returns>
+    /// <summary>Updates the controller's time settings. Values that are not specified keep their current value.</summary>
+    /// <param name="settings">The changes to apply.</param>
+    /// <exception cref="ArgumentException">The time server cannot be reached or the controller rejects the settings.</exception>
     /// <exception cref="EmptyResponseException">The controller returns no update result.</exception>
-    Task<bool?> UpdateSettings(TimeSettings settings);
+    Task UpdateSettings(UpdateTimeSettingsRequest settings);
 }
 
 /// <summary>
@@ -137,13 +138,14 @@ public class TimeService(
     /// <summary>
     /// Retrieves the current time on the IHC system directly from the time configured server server.
     /// </summary>
+    /// <param name="serverName">The time server to query, or <see langword="null"/> to query the configured time server.</param>
     /// <returns>A <see cref="TimeServerConnectionResult"/> object containing connection details and time.</returns>
     /// <exception cref="EmptyResponseException">Thrown if the response is null or contains no data.</exception>
-    public async Task<TimeServerConnectionResult> GetTimeFromServer()
+    public async Task<TimeServerConnectionResult> GetTimeFromServer(string? serverName = null)
     {
         var token = authCache.GetAuthToken().Token;
         var response = await client.Post<inputMessageName1, outputMessageName1>(
-            ServiceName, "getTimeFromServer", token!, new inputMessageName1());
+            ServiceName, "getTimeFromServer", token!, new inputMessageName1(serverName));
 
         if (response?.getTimeFromServer2 == null)
         {
@@ -168,58 +170,60 @@ public class TimeService(
     }
 
     /// <summary>
-    /// Updates the time server settings in the IHC TimeManagerService.
+    /// Updates the time settings in the IHC TimeManagerService.
     /// </summary>
-    /// <param name="settings">The new time settings to apply.</param>
-    /// <returns>A boolean indicating whether the settings were successfully updated.</returns>
+    /// <remarks>
+    /// The controller replaces all settings, so values that are not specified are copied from the current settings.
+    /// The time server is tested before synchronization is enabled, and a manual time is only sent when the
+    /// controller does not synchronize with a time server.
+    /// </remarks>
+    /// <param name="settings">The changes to apply.</param>
+    /// <exception cref="ArgumentException">The time server cannot be reached or the controller rejects the settings.</exception>
     /// <exception cref="EmptyResponseException">Thrown if the response is null or contains no data.</exception>
-    public async Task<bool?> UpdateSettings(TimeSettings settings)
+    public async Task UpdateSettings(UpdateTimeSettingsRequest settings)
     {
-        var token = authCache.GetAuthToken().Token;
+        var current = await GetSettings();
+
+        var serverName = settings.TimeServerName ?? current.TimeServerName ?? string.Empty;
+        var synchronize = settings.Synchronize ?? current.Synchronize ?? false;
+
+        if (synchronize)
+        {
+            var test = await GetTimeFromServer(serverName);
+            if (!test.ConnectionWasSuccessful)
+            {
+                throw new ArgumentException($"The time server '{serverName}' could not be reached.", nameof(settings));
+            }
+        }
 
         var input = new inputMessageName4
         {
-            setSettings1 = new WSTimeManagerSettings()
+            setSettings1 = new WSTimeManagerSettings
+            {
+                serverName = serverName,
+                synchroniseTimeAgainstServer = synchronize,
+                syncIntervalInHours = settings.SynchronizeInterval ?? current.SynchronizeInterval ?? 0,
+                useDST = settings.UseDst ?? current.UseDst ?? false,
+                gmtOffsetInHours = settings.GmtOffset ?? current.GmtOffset ?? 0
+            }
         };
 
-        if (settings.TimeServerName != null)
+        // Only set the clock when it is not synchronized with a time server.
+        if (!synchronize && settings.CurrentTime != null)
         {
-            input.setSettings1.serverName = settings.TimeServerName;
-        }
-
-        if (settings.Synchronize != null)
-        {
-            input.setSettings1.synchroniseTimeAgainstServer = settings.Synchronize.Value;
-        }
-
-        if (settings.SynchronizeInterval != null)
-        {
-            input.setSettings1.syncIntervalInHours = settings.SynchronizeInterval.Value;
-        }
-
-        if (settings.UseDst != null)
-        {
-            input.setSettings1.useDST = settings.UseDst.Value;
-        }
-
-        if (settings.GmtOffset != null)
-        {
-            input.setSettings1.gmtOffsetInHours = settings.GmtOffset.Value;
-        }
-
-        if (settings.CurrentTime != null)
-        {
+            var utc = settings.CurrentTime.Value.UtcDateTime;
             input.setSettings1.timeAndDateInUTC = new WSDate
             {
-                year = settings.CurrentTime.Value.Year,
-                monthWithJanuaryAsOne = settings.CurrentTime.Value.Month,
-                day = settings.CurrentTime.Value.Day,
-                hours = settings.CurrentTime.Value.Hour,
-                minutes = settings.CurrentTime.Value.Minute,
-                seconds = settings.CurrentTime.Value.Second
+                year = utc.Year,
+                monthWithJanuaryAsOne = utc.Month,
+                day = utc.Day,
+                hours = utc.Hour,
+                minutes = utc.Minute,
+                seconds = utc.Second
             };
         }
 
+        var token = authCache.GetAuthToken().Token;
         var response = await client.Post<inputMessageName4, outputMessageName4>(
             ServiceName, "setSettings", token!, input);
 
@@ -228,7 +232,9 @@ public class TimeService(
             throw new EmptyResponseException();
         }
 
-        var result = response.setSettings2.Value;
-        return result;
+        if (!response.setSettings2.Value)
+        {
+            throw new ArgumentException("The controller rejected the time settings.", nameof(settings));
+        }
     }
 }

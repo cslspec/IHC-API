@@ -66,6 +66,29 @@ public class TimeController(ITimeService timeService) : ControllerBase
     }
 
     /// <summary>
+    /// Update time settings.
+    /// </summary>
+    /// <remarks>
+    /// Updates the time settings of the IHC controller. Properties that are left out keep their current value.
+    /// When synchronization is enabled, the time server is tested first and the settings are only saved if it responds.
+    /// The current time is only applied when the controller does not synchronize with a time server.
+    /// </remarks>
+    /// <param name="settings">The changes to apply.</param>
+    /// <returns>An empty response when the settings were updated.</returns>
+    /// <response code="204">If the time settings were updated successfully.</response>
+    /// <response code="400">If the time server cannot be reached or the controller rejects the settings.</response>
+    /// <response code="500">If there is an error updating the time settings.</response>
+    /// <response code="503">If there is a problem connecting to the IHC controller.</response>
+    [HttpPost("settings")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> UpdateSettings(UpdateTimeSettingsRequest settings)
+    {
+        await timeService.UpdateSettings(settings);
+        return NoContent();
+    }
+
+    /// <summary>
     /// Test time server connection.
     /// </summary>
     /// <remarks>
