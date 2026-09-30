@@ -25,6 +25,7 @@ builder.Services.AddScoped<IConfigurationService, ConfigurationService>();
 builder.Services.AddScoped<IAccessControlService, AccessControlService>();
 builder.Services.AddScoped<IAuthCacheService, AuthCacheService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddScoped<IResourceService, ResourceService>();
 builder.Services.AddScoped<ITimeService, TimeService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProblemService, ProblemService>();

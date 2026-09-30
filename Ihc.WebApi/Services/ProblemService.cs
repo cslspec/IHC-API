@@ -50,6 +50,16 @@ public class ProblemService(IHttpContextAccessor contextAccessor) : IProblemServ
                 Instance = contextAccessor?.HttpContext?.Request.Path,
             };
         }
+        else if (exception is NotFoundException)
+        {
+            result = new ProblemDetails
+            {
+                Title = "Not found",
+                Detail = exception.Message,
+                Status = StatusCodes.Status404NotFound,
+                Instance = contextAccessor?.HttpContext?.Request.Path,
+            };
+        }
         else if (exception is ArgumentException)
         {
             result = new ProblemDetails

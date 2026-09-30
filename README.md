@@ -6,15 +6,16 @@ The IHC controller exposes its functionality through a set of SOAP web services 
 
 ## Features
 
-The API currently offers read access to the controller and a few configuration updates:
+The API currently offers read access to the controller, resource values, user management and a few configuration updates:
 
 | Area | Endpoints | Description |
 | --- | --- | --- |
 | Project | `GET /api/project/available`<br>`GET /api/project/info`<br>`GET /api/project/file`<br>`GET /api/project/model` | Project availability and metadata, the raw project XML, and the parsed project model. |
+| Resources | `GET /api/resources/{resourceId}/runtime` | The current runtime value of a resource, such as an input, output or dimmer level. Resource IDs can be found in the project model. |
 | Time | `GET /api/time/uptime`<br>`GET /api/time/localtime`<br>`GET /api/time/settings`<br>`POST /api/time/settings/test` | Uptime, controller clock, time settings, and a test of the configured time server. |
 | Configuration | `GET /api/config/system`<br>`GET /api/config/network`<br>`GET /api/config/dns`<br>`GET` / `POST /api/config/smtp`<br>`GET /api/config/email`<br>`GET /api/config/email/enable`<br>`GET /api/config/access` | System information, network and DNS settings, SMTP and email settings, and web access control. |
 | Session | `POST /api/config/logout` | Logs out of the controller and clears the cached session. |
-| Users | `GET /api/users` | Users defined on the controller (passwords are not returned). |
+| Users | `GET /api/users`<br>`POST /api/users`<br>`PUT /api/users/{username}`<br>`DELETE /api/users/{username}` | List, add, update and remove users on the controller. Passwords are never returned. When updating, fields that are left out keep their current value. The `admin` user and the user the API logs in with cannot be removed. |
 
 The full, up-to-date endpoint reference with request and response schemas is available in the built-in API documentation (see [API documentation](#api-documentation)).
 
@@ -26,7 +27,8 @@ You do not log in to IHC API itself. The API logs in to the controller with the 
 
 Errors are returned as [RFC 9457 problem details](https://www.rfc-editor.org/rfc/rfc9457):
 
-- `400 Bad Request`: the request is invalid.
+- `400 Bad Request`: the request is invalid, for example when adding a user whose username already exists or removing the `admin` user.
+- `404 Not Found`: the requested user or resource does not exist.
 - `500 Internal Server Error`: the controller returned an error or an unexpected response.
 - `503 Service Unavailable`: the controller cannot be reached or rejected the login (invalid account, connection restrictions or insufficient user rights).
 
@@ -105,6 +107,29 @@ Example request:
 
 ```sh
 curl http://localhost:8080/api/project/info
+```
+
+Runtime values carry a `type` field that tells which kind of value it is:
+
+```sh
+curl http://localhost:8080/api/resources/12345/runtime
+```
+
+```json
+{
+  "resourceId": 12345,
+  "isRuntimeValue": true,
+  "typeString": "",
+  "value": { "type": "boolean", "value": true }
+}
+```
+
+Adding a user (`Group` is `Administrators` or `Users`):
+
+```sh
+curl -X POST http://localhost:8080/api/users \
+  -H "Content-Type: application/json" \
+  -d '{"username":"jane","password":"secret","firstname":"Jane","group":"Users"}'
 ```
 
 ## Project structure
