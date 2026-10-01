@@ -2,9 +2,17 @@
 
 ## About
 
-The LK IHC Controller is a building automation system developed by Lauritz Knudsen and later maintained by Schneider Electric. Ethernet-enabled models expose controller resources through the built-in Viewer module, making it possible for external applications to communicate over TCP/IP.
+The LK IHC Controller was a programmable building automation platform developed by Lauritz Knudsen and later maintained by Schneider Electric. For many years, it was one of the most widely deployed residential automation systems in Denmark, providing centralized control of lighting, switches, relays, sensors, and other building functions.
 
-IHC API provides a documented REST interface to the controller's SOAP services. It is developed and tested with Viewer 6.1 and helps connect existing installations to modern home automation, monitoring, and custom applications.
+With the introduction of Ethernet-enabled controller models, the platform gained support for IP-based communication through a built-in Viewer module, allowing external systems to monitor and interact with controller resources over a standard IPv4 network. This capability made integration with third-party software and home automation platforms possible without requiring direct access to the underlying IHC bus.
+
+Although the controller hardware reached end-of-life in mid-2023 and is no longer installed in new projects, a significant installed base remains in active operation. Many existing installations continue to provide reliable service, and replacement components are still available through established distribution channels.
+
+This project provides a modern API for accessing and controlling LK IHC Controller systems. Its purpose is to expose controller functionality through a documented and developer-friendly interface, enabling integration with contemporary automation systems, custom applications, monitoring solutions, and home automation platforms.
+
+The API has been developed and tested against Viewer version 6.1. Communication is performed over a standard TCP/IP network, allowing applications to interact with controller resources without requiring modifications to the existing installation.
+
+By providing modern programmatic access to a mature and proven automation platform, this project helps extend the operational lifetime of existing LK IHC installations and enables their continued integration into today's connected building environments.
 
 ## Acknowledgements
 
