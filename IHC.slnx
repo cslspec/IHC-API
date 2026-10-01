@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/Build/">
+    <File Path=".gitignore" />
+    <File Path="Dockerfile" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="Ihc.Project/Ihc.Project.csproj" />
+  <Project Path="Ihc.Soap/Ihc.Soap.csproj" />
+  <Project Path="Ihc.WebApi.Tests/Ihc.WebApi.Tests.csproj" />
+  <Project Path="Ihc.WebApi/Ihc.WebApi.csproj" />
+</Solution>
