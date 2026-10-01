@@ -60,10 +60,9 @@ Controller settings live in the `controller` section of [Ihc.WebApi/appsettings.
 
 ```json
 "controller": {
-  "Address": "http://192.168.0.2",
+  "Address": "http://192.168.1.2",
   "UserName": "<INSERT USERNAME>",
-  "Password": "<INSERT PASSWORD>",
-  "Application": "openapi"
+  "Password": "<INSERT PASSWORD>"
 }
 ```
 
@@ -72,7 +71,6 @@ Controller settings live in the `controller` section of [Ihc.WebApi/appsettings.
 | `Address` | Base URL of the IHC controller, including `http://` or `https://`. |
 | `UserName` | User name of an account on the controller. |
 | `Password` | Password for that account. |
-| `Application` | Application name sent to the controller when logging in. |
 
 The application does not start if the `controller` section is missing.
 

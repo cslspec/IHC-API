@@ -5,17 +5,20 @@
 /// </summary>
 public interface IControllerConfiguration
 {
-    /// <summary>Gets or sets the base address of the IHC controller.</summary>
+    /// <summary>
+    /// The base address of the IHC controller.
+    /// </summary>
     string Address { get; set; }
 
-    /// <summary>Gets or sets the username used to authenticate with the controller.</summary>
+    /// <summary>
+    /// The username used to authenticate with the controller.
+    /// </summary>
     string UserName { get; set; }
 
-    /// <summary>Gets or sets the password used to authenticate with the controller.</summary>
+    /// <summary>
+    /// The password used to authenticate with the controller.
+    /// </summary>
     string Password { get; set; }
-
-    /// <summary>Gets or sets the application name sent during authentication, if configured.</summary>
-    string? Application { get; set; }
 }
 
 /// <summary>
@@ -23,7 +26,9 @@ public interface IControllerConfiguration
 /// </summary>
 public class ControllerConfiguration : IControllerConfiguration
 {
-    /// <summary>The configuration section name containing controller settings.</summary>
+    /// <summary>
+    /// The configuration section name containing controller settings.
+    /// </summary>
     public const string Name = "controller";
 
     /// <inheritdoc />
@@ -34,7 +39,4 @@ public class ControllerConfiguration : IControllerConfiguration
 
     /// <inheritdoc />
     public required string Password { get; set; }
-
-    /// <inheritdoc />
-    public string? Application { get; set; }
 }

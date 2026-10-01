@@ -34,12 +34,19 @@ public interface IAuthService
 /// <param name="xmlService">Service for serializing and deserializing SOAP messages.</param>
 /// <param name="clientFactory">Factory for creating HTTP clients.</param>
 public class AuthService(
-    IControllerConfiguration config,
-    ISoapDateService dateService,
-    IXmlService xmlService,
-    IHttpClientFactory clientFactory)
+        IControllerConfiguration config,
+        ISoapDateService dateService,
+        IXmlService xmlService,
+        IHttpClientFactory clientFactory)
     : IAuthService
 {
+    /// <summary>
+    /// IHC's legacy authentication protocol uses this as an application/user-group identifier.
+    /// The value "openapi" is not related to the OpenAPI specification. Always use "openapi"
+    /// for third-party authentication requests to the IHC controller.
+    /// </summary>
+    private const string Application = "openapi";
+
     /// <inheritdoc />
     public IhcUser Login()
     {
@@ -49,7 +56,7 @@ public class AuthService(
             {
                 username = config.UserName,
                 password = config.Password,
-                application = config.Application
+                application = Application
             }
         };
 
