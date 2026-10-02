@@ -18,12 +18,14 @@ By providing modern programmatic access to a mature and proven automation platfo
 
 Thanks to these projects and contributors for documenting LK IHC and exploring its integrations and communication protocols:
 
-- [Jens Østergaard Nielsen (@dingusdk)](https://github.com/dingusdk), especially for the Home Assistant integration.
 - [IHC® Captain](https://jemi.dk/ihc/), a PHP solution for working with LK IHC Controllers.
-- [IHCClient](https://github.com/priiduonu/ihcclient), which connects older non-Ethernet controllers to Home Assistant.
+- [@dingusdk](https://github.com/dingusdk), especially for the original Home Assistant integration.
+- [Dingus.IHCSdkWR](https://www.nuget.org/packages/Dingus.IHCSdkWR), a NuGet package for working with LK IHC.
+- [ProcrastDk.IhcSdk](https://www.nuget.org/packages/ProcrastDk.IhcSdk), another good NuGet SDK for LK IHC.
 - [IHCClientSDK](https://github.com/mmc41/IHCClientSDK), an open-source SDK for LK IHC communication.
+- [IHCClient](https://github.com/priiduonu/ihcclient), which connects older non-Ethernet controllers to Home Assistant.
 
-## REST API
+## The IHC REST API
 
 The IHC controller exposes its functionality through a set of SOAP web services (`/ws/AuthenticationService`, `/ws/ControllerService`, `/ws/TimeManagerService`, ...). IHC API is an ASP.NET Core web application that sits between your client and the controller: it logs in with a configured user account, calls the SOAP services on your behalf and returns plain JSON. It also downloads the project file from the controller and parses it into a structured model of groups, products, resources and scenes.
 
